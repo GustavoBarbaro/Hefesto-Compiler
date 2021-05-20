@@ -35,7 +35,7 @@ int main(){
     printf("\n\n============  Código Intermediário (3 endereços)  ============\n\n");
     if(!Erro)
         geraCod(arvoreSintatica);
-        //printa_lista();
+        printa_lista();
     fclose(arq_cod_fonte);
     return 0;
 }

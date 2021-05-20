@@ -396,11 +396,14 @@ void printa_lista (){
     while (no_atual){
         t_quadrupla * temp = no_atual;
         no_atual = no_atual->next;
-        printf ("nome: %s\n", temp->nome);
+
+        printf("(%s, %s, %s, %s)\n", temp->nome, temp->campo_1, temp->campo_2, temp->campo_3);
+
+        /*printf ("nome: %s\n", temp->nome);
         printf ("campo_1: %s\n", temp->campo_1);
         printf ("campo_2: %s\n", temp->campo_2);
         printf ("campo_3: %s\n", temp->campo_3);
-        printf ("\n\n");
+        printf ("\n\n");*/
     }
 
 }
@@ -418,10 +421,30 @@ void salva_quadrupla (char textinho[], char c_1[], char c_2[], char c_3[], int v
     buffer_2 = malloc (sizeof (char) * 15);
     buffer_3 = malloc (sizeof (char) * 15);
 
-    //convertendo int para char e ja concatenando em buffer
-    sprintf(buffer_1, "%s%d", c_1, var_c_1);
-    sprintf(buffer_2, "%s%d", c_2, var_c_2);
-    sprintf(buffer_3, "%s%d", c_3, var_c_3);
+    //caso nao precise de conversão
+    if (var_c_1 == -1){
+        buffer_1 = strdup(c_1);
+    }
+    else{
+        sprintf(buffer_1, "%s%d", c_1, var_c_1); //convertendo int para char e ja concatenando em buffer  
+    }
+
+    //caso nao precise de conversão
+    if(var_c_2 == -1){
+        buffer_2 = strdup(c_2);
+    }
+    else{
+        sprintf(buffer_2, "%s%d", c_2, var_c_2); //convertendo int para char e ja concatenando em buffer
+    }
+
+    //caso nao precise de conversão
+    if(var_c_3 == -1){
+        buffer_3 = strdup(c_3);
+    }
+    else{
+        sprintf(buffer_3, "%s%d", c_3, var_c_3); //convertendo int para char e ja concatenando em buffer
+    }
+    
 
     //agora esta tudo pronto para adicionar a quadrupla na lista
     switch (m_flag){
