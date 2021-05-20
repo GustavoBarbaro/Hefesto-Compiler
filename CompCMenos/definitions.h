@@ -110,3 +110,18 @@ void geraCod(NoArvore * arv);
 
 
 
+// COLOCANDO AGORA AS FUNCOES DA LISTA ENCADEADA PRA SALVAR AS QUADRUPLAS
+
+
+
+
+
+
+void lista_add (char nome[], char campo_1[], char campo_2[], char campo_3[]);
+
+void lista_free();
+
+void printa_lista ();
+
+void salva_quadrupla (char textinho[], char c_1[], char c_2[], char c_3[], int var_c_1, int var_c_2, int var_c_3, int m_flag);
+

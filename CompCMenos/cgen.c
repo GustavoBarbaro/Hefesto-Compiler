@@ -22,12 +22,24 @@ static void genStmt( NoArvore * arv)
          t1 = tempnum;
          l1 = labelnum++;
          l2 = labelnum++;
+
          printf("(IFF, $t%d, L%d,  )\n", t1,l1);
+         salva_quadrupla("IFF", "$t", "L", "NADA", t1, l1, 0, 1);
+
+
          cGen(p2);// bloco interno
+
          printf("(GOTO,L%d,  ,  )\n", l2);
+         salva_quadrupla("GOTO", "L", " ", " ", l2, 0, 0, 2);
+
          printf("(LAB,L%d,  ,  )\n", l1);
+         salva_quadrupla("LAB", "L", " ", " ", l1, 0, 0, 2);
+
          cGen(p3);// else
+
          printf("(LAB,L%d,  ,  )\n", l2);
+         salva_quadrupla("LAB", "L", " ", " ", l1, 0, 0, 2);         
+
          numenderecos = 0;
          break; 
       case S_While:
@@ -220,4 +232,5 @@ static void cGen( NoArvore * arv)
 void geraCod(NoArvore * arv){    
     cGen(arv);
     printf("HALT\n\n");
+
 }

@@ -324,3 +324,130 @@ char* nome_token(Token t){
     return nome;
 }
 
+// COLOCANDO AGORA AS FUNCOES DA LISTA ENCADEADA PRA SALVAR AS QUADRUPLAS
+
+
+typedef struct quadrupla {
+    char * nome;
+    char * campo_1;
+    char * campo_2;
+    char * campo_3;
+
+    struct quadrupla * next;
+} t_quadrupla;
+
+t_quadrupla *cabeca_lista = NULL; //head, começo da lista (endereço)
+
+
+void lista_add (char nome[], char campo_1[], char campo_2[], char campo_3[]){
+
+    if (cabeca_lista == NULL) {
+        cabeca_lista = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+        cabeca_lista->nome = strdup(nome);
+        cabeca_lista->campo_1 = strdup(campo_1);
+        cabeca_lista->campo_2 = strdup(campo_2);
+        cabeca_lista->campo_3 = strdup(campo_3);
+        cabeca_lista->next = NULL;
+
+        /*printf("%s\n", cabeca_lista->nome);
+        printf("%s\n", cabeca_lista->campo_1);
+        printf("%s\n", cabeca_lista->campo_2);
+        printf("%s\n", cabeca_lista->campo_3);*/
+        return;
+    }
+
+
+    t_quadrupla * no_atual = cabeca_lista;
+
+    while(no_atual->next) {
+        no_atual = no_atual->next;
+    }
+
+    no_atual->next = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+    no_atual->next->nome = strdup(nome);
+    no_atual->next->campo_1 = strdup(campo_1);
+    no_atual->next->campo_2 = strdup(campo_2);
+    no_atual->next->campo_3 = strdup(campo_3);
+    no_atual->next->next = NULL;
+
+}
+
+void lista_free() {
+    t_quadrupla * no_atual = cabeca_lista;
+    while(no_atual) {
+        t_quadrupla * temp = no_atual;
+        no_atual = no_atual->next;
+        free(temp->campo_1);
+        free(temp->campo_2);
+        free(temp->campo_3);
+        free(temp->nome);
+        free(temp);
+    }
+    no_atual = NULL;
+    cabeca_lista = NULL;
+}
+
+void printa_lista (){
+
+    t_quadrupla * no_atual = cabeca_lista;
+
+    while (no_atual){
+        t_quadrupla * temp = no_atual;
+        no_atual = no_atual->next;
+        printf ("nome: %s\n", temp->nome);
+        printf ("campo_1: %s\n", temp->campo_1);
+        printf ("campo_2: %s\n", temp->campo_2);
+        printf ("campo_3: %s\n", temp->campo_3);
+        printf ("\n\n");
+    }
+
+}
+
+
+
+void salva_quadrupla (char textinho[], char c_1[], char c_2[], char c_3[], int var_c_1, int var_c_2, int var_c_3, int m_flag){
+
+    char * buffer_1;
+    char * buffer_2;
+    char * buffer_3;
+
+    //alocando 3 buffers temporarios
+    buffer_1 = malloc (sizeof (char) * 15);
+    buffer_2 = malloc (sizeof (char) * 15);
+    buffer_3 = malloc (sizeof (char) * 15);
+
+    //convertendo int para char e ja concatenando em buffer
+    sprintf(buffer_1, "%s%d", c_1, var_c_1);
+    sprintf(buffer_2, "%s%d", c_2, var_c_2);
+    sprintf(buffer_3, "%s%d", c_3, var_c_3);
+
+    //agora esta tudo pronto para adicionar a quadrupla na lista
+    switch (m_flag){
+
+        case (0): // 0 campo sem usar da quadrupla
+            lista_add(textinho, buffer_1, buffer_2, buffer_3);
+        break;
+
+        case (1): // 1 campos sem usar da quadrupla
+            lista_add(textinho, buffer_1, buffer_2, " ");
+        break;
+
+        case (2): // 2 campos sem usar da quadrupla
+            lista_add(textinho, buffer_1, " ", " ");
+        break;
+
+        case (3): // campos sem usar da quadrupla (halt)
+            lista_add(textinho, " ", " ", " ");
+        break;
+
+        default:
+        break;
+    }
+
+
+    free (buffer_1);
+    free (buffer_2);
+    free (buffer_3);
+}
