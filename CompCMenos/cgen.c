@@ -191,6 +191,7 @@ static void genExp( NoArvore * arv)
 
       //printf("(LOAD, $t%d, %s,  )\n", tempnum, arv->atrib.nome);
       salva_quadrupla("LOAD", "$t", arv->atrib.nome, " ", tempnum, -1, -1, 1);
+      //printf("FILHOOO: %d\n", arv->atrib.val);
 
       nome_var = arv->atrib.nome;//perigoso
       numenderecos++;

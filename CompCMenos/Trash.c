@@ -42,7 +42,7 @@ void main(void) {
     i = low + 1;
     while (i < high ){
         if (a [i] < x ){
-            x = a [i ]; 9 k = i ;
+            x = a [i ]; k = i ;
         }
         i = i + 1;
     }
@@ -63,4 +63,21 @@ void sort ( int a [] , int low , int high ){
         i = i + 1;
     }
 }
+
+void main ( void ){
+
+    int i; int vet [10];
+    i = 0;
+    while (i < 10) {
+        vet [i] = input () ;
+        i = i + 1;
+    }
+
+    sort ( vet ,0 ,10);
+    i = 0;
+    while (i < 10) {
+    output ( vet [i ] ,0) ;
+    i = i + 1;
+
+    }
 */
