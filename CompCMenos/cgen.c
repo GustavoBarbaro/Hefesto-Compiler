@@ -4,6 +4,8 @@ static int tempnum = 1;
 static int labelnum = 0;
 static int numenderecos = 0;
 static int param = 0;
+static char * parametros_vet[500]; //maximo de 500 parametros
+static int param_cont = 0; // contador de parametros
 static char* escopo = "global";
 static char* nome_var;
 static void cGen (NoArvore * arv);
@@ -129,23 +131,43 @@ static void genDecl( NoArvore * arv)
          //printf("(FUN,  %s, %s,  )\n", retStrTipo(arv->tipo_c), arv->atrib.nome);
          salva_quadrupla("FUN", retStrTipo(arv->tipo_c), arv->atrib.nome, " ", -1, -1, -1, 1);
 
-         escopo = arv->atrib.nome;
-         param = 1;
+         escopo = arv->atrib.nome; //função nome rever
+         param = 1;//possui argumentos
          cGen(p1);//args
+
+         int i;
+
+         for (i = 0; i < param_cont; i++){
+            salva_quadrupla("LOAD", "$t", parametros_vet[i], " ", tempnum++, -1, -1, 1);
+         }
+
          param = 0;
          cGen(p2);//corpo
          numenderecos = 0;
+         param_cont = 0;
+         salva_quadrupla("END", arv->atrib.nome, "", "", -1, -1, -1, 2);
          break;
       case D_var:
-         if(param == 1){
+         if(param == 1){//se possui argumentos
 
             //printf("(ARG, %s, %s, %s)\n", retStrTipo(arv->tipo_c), arv->atrib.nome, escopo);
             salva_quadrupla("ARG", retStrTipo(arv->tipo_c), arv->atrib.nome, escopo, -1, -1, -1, 0);
 
-         }else{
+            parametros_vet [param_cont++] = strdup(arv->atrib.nome);
 
+         }else{
+            p1 = arv->filho[0] ;
             //printf("(ALLOC, %s, %s,  )\n", arv->atrib.nome,escopo);
-            salva_quadrupla("ALLOC", arv->atrib.nome, escopo, " ", -1, -1, -1, 1);
+
+            if(p1 != NULL){
+                //salva como vetor
+                salva_quadrupla("ALLOC", arv->atrib.nome, escopo, "", -1, -1, arv->filho[0]->atrib.val, 0);
+            }
+            else{
+                //salva normal
+                salva_quadrupla("ALLOC", arv->atrib.nome, escopo, " ", -1, -1, -1, 1);
+            }
+
 
          }
          break;
@@ -190,8 +212,22 @@ static void genExp( NoArvore * arv)
       tempnum++;
 
       //printf("(LOAD, $t%d, %s,  )\n", tempnum, arv->atrib.nome);
-      salva_quadrupla("LOAD", "$t", arv->atrib.nome, " ", tempnum, -1, -1, 1);
-      //printf("FILHOOO: %d\n", arv->atrib.val);
+      //salva_quadrupla("LOAD", "$t", arv->atrib.nome, " ", tempnum, -1, -1, 1);
+
+      p1 = arv->filho[0];
+
+      if (p1 != NULL){ //para tratar do vetor, quer dizer que tem filho, ou seja, o indice
+        //cGen(p1); //ideia inicial
+
+        salva_quadrupla("LOAD", "$t", arv->filho[0]->atrib.nome, " ", tempnum, -1, -1, 1);
+
+        salva_quadrupla("LOAD", "$t", arv->atrib.nome, "$t", ++tempnum, -1, tempnum, 0);
+
+      }
+      else{
+        salva_quadrupla("LOAD", "$t", arv->atrib.nome, " ", tempnum, -1, -1, 1);
+      }
+      
 
       nome_var = arv->atrib.nome;//perigoso
       numenderecos++;

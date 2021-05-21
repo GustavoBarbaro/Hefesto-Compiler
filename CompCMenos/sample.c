@@ -1,7 +1,12 @@
+
 int main(void) { 
-    int x[5];
+    int x; int low;
+    int a[500];
+
     
-    x[2] = 4;
+    x = a [ low ];
+
+
 
     return 0;
 }
