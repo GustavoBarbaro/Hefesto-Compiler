@@ -46,7 +46,7 @@ typedef enum {S_If,S_While,S_Atrib,S_Retorno,S_Chamada} TipoStmt;
 typedef enum {E_Op,E_Num,E_Id} TipoExp;
 typedef enum {Void,Integer,Array,Boolean} Tipo; // Usado para verificação de tipo
 
-#define MAXFILHOS 3
+#define MAXFILHOS 3 //3 filhos por causa do if que exige 3
 
 typedef struct noArvore{
     struct noArvore * filho[MAXFILHOS];
@@ -113,10 +113,6 @@ void geraCod(NoArvore * arv);
 // COLOCANDO AGORA AS FUNCOES DA LISTA ENCADEADA PRA SALVAR AS QUADRUPLAS
 
 
-
-
-
-
 void lista_add (char nome[], char campo_1[], char campo_2[], char campo_3[]);
 
 void lista_free();
@@ -124,4 +120,23 @@ void lista_free();
 void printa_lista ();
 
 void salva_quadrupla (char textinho[], char c_1[], char c_2[], char c_3[], int var_c_1, int var_c_2, int var_c_3, int m_flag);
+
+
+
+//==================================== Pilha ====================================
+
+
+typedef struct SNome{
+    char *nome;
+    struct SNome *abaixo;
+}TNome;
+
+typedef struct {
+    int numelementos;
+    TNome* topo;
+}Pilha;
+
+void push(Pilha *P, char *nome);
+char* pop(Pilha *P);
+void inicializaPilha(Pilha *P);
 

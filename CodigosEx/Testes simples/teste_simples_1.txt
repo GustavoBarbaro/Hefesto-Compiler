@@ -1,4 +1,5 @@
-/* Um programa para calcular operações aritméticas */
+/* Um programa para calcular operações
+aritméticas */
 
 void main(void)
 {	

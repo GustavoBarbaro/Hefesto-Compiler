@@ -6,7 +6,10 @@
 static char * nomeSalvo; // para uso geral em IDs
 static char * nomeVarSalvo; // para uso em atribuições
 static char * nomeFuncDecl; // para uso em declaracao de funções
-static char * nomeFunc; // para uso em funções
+
+static Pilha nome_funcao;
+static int func_inicializada = 0;
+
 static int numLinhaSalva;
 static int numLinhaSalvaF;
 static NoArvore* arvoreSalva; /* armazena árvore para retornar depois */
@@ -236,6 +239,7 @@ exp         : var IGUAL exp
                 { $$ = novoNoStmt(S_Atrib);
                   $$->filho[0] = $1;
                   $$->filho[1] = $3;
+                  $$->tipo_c = Integer;
                   $$->atrib.op = IGUAL; //IGUAL
                 }
             | simples_exp {$$ = $1;}
@@ -306,13 +310,20 @@ fator       : ABREPAR exp FECHAPAR {$$ = $1;}
                     $$->tipo_c = Integer;
                   }
             ;
-ativacao    : ID { nomeFunc = copiaString(ID_nome);
-                   numLinhaSalva = numlinha;
+ativacao    : ID { 
+
+                    if (func_inicializada == 0){//primeira vez, então inicializar pilha de nomes
+                        inicializaPilha(&nome_funcao);
+                        func_inicializada = 1;
+                    }
+
+                    push (&nome_funcao, copiaString(ID_nome));
+                    numLinhaSalva = numlinha;
                  }
             ABREPAR args FECHAPAR
                  { $$ = novoNoStmt(S_Chamada);
                    $$->filho[1] = $4; // filho direito
-                   $$->atrib.nome = nomeFunc;
+                   $$->atrib.nome = pop(&nome_funcao);
                    $$->numlinha = numLinhaSalva;
                  }
             ;

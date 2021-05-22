@@ -1,0 +1,13 @@
+/* Um programa simples com while */
+
+void main(void)
+{  
+  int x;
+  x = 0;
+  while (x < 10) 
+  {
+    x = x + 1;
+  }
+  output(x);
+}
+

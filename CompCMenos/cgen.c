@@ -7,8 +7,11 @@ static int param = 0;
 static char * parametros_vet[500]; //maximo de 500 parametros
 static int param_cont = 0; // contador de parametros
 static char* escopo = "global";
-static char* nome_var;
 static void cGen (NoArvore * arv);
+static int flag_irmao = 0;
+
+Pilha var_nome;
+
 
 static void genStmt( NoArvore * arv)
 { NoArvore * p1, * p2, * p3;
@@ -72,6 +75,7 @@ static void genStmt( NoArvore * arv)
          tempnum++;
          p1 = arv->filho[0];
          p2 = arv->filho[1];
+         push(&var_nome, arv->filho[0]->atrib.nome);
          cGen(p1);
          t1 = tempnum;
          cGen(p2);
@@ -81,7 +85,7 @@ static void genStmt( NoArvore * arv)
          salva_quadrupla("ASSIGN", "$t", "$t", " ", t1, t2, 0, 1);
 
          //printf("(STORE, %s, $t%d,  )\n",nome_var, t1);
-         salva_quadrupla("STORE", nome_var, "$t", " ", -1, t1, 0, 1);
+         salva_quadrupla("STORE", pop(&var_nome), "$t", " ", -1, t1, 0, 1);
 
          break;
       case S_Retorno:
@@ -94,9 +98,13 @@ static void genStmt( NoArvore * arv)
          break;
       case S_Chamada:
          p1 = arv->filho[1];
+
+         //printf("NOME DO NO %d\n\n", arv->filho[1]->tipo_de_no);
+
          int npar = 0;
-         tempnum++;
+         tempnum++; //acho que tempnum ta a mais
          while(p1!= NULL){
+            flag_irmao = 1; //se for 1 nao avança o irmao
             cGen(p1);
 
             //printf("(PARAM, $t%d, ,  )\n", tempnum++);
@@ -104,7 +112,10 @@ static void genStmt( NoArvore * arv)
 
             p1 = p1->irmao;
             npar++;
+            flag_irmao = 0;
+            
          }
+
 
          //printf("(CALL, %s, %d, $t%d)\n", arv->atrib.nome, npar, tempnum);
          salva_quadrupla("CALL", arv->atrib.nome, "", "$t", -1, npar, tempnum, 0);
@@ -217,7 +228,6 @@ static void genExp( NoArvore * arv)
       p1 = arv->filho[0];
 
       if (p1 != NULL){ //para tratar do vetor, quer dizer que tem filho, ou seja, o indice
-        //cGen(p1); //ideia inicial
 
         salva_quadrupla("LOAD", "$t", arv->filho[0]->atrib.nome, " ", tempnum, -1, -1, 1);
 
@@ -229,7 +239,6 @@ static void genExp( NoArvore * arv)
       }
       
 
-      nome_var = arv->atrib.nome;//perigoso
       numenderecos++;
       break; 
 
@@ -271,6 +280,12 @@ static void genExp( NoArvore * arv)
 
                //printf("(LT, $t%d, $t%d, $t%d)\n", t1, t2, tempnum);
                salva_quadrupla("LT", "$t", "$t", "$t", t1, t2, tempnum, 0);
+
+               break;
+            case MAIOR :
+
+               //printf("(LT, $t%d, $t%d, $t%d)\n", t1, t2, tempnum);
+               salva_quadrupla("GT", "$t", "$t", "$t", t1, t2, tempnum, 0);
 
                break;
             case IGUALIGUAL :
@@ -327,13 +342,19 @@ static void cGen( NoArvore * arv)
       default:
         break;
     }
-    cGen(arv->irmao);
+
+    if (flag_irmao != 1){
+        cGen(arv->irmao);
+    }
   }
 }
 
 //gera o código intermediário utilizando a Função
 // recursiva cGen, que percorre a arvore sintática
-void geraCod(NoArvore * arv){    
+void geraCod(NoArvore * arv){
+
+    inicializaPilha (&var_nome);
+
     cGen(arv);
     //printf("HALT\n\n");
     salva_quadrupla("HALT", " ", " ", " ", -1, -1, -1, 3);

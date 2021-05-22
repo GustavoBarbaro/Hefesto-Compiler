@@ -1,0 +1,15 @@
+/* Um programa simples com while e if */
+
+void main(void)
+{  
+  int x; int y;
+  x = 0;
+  y = 20;
+  while (x < y) 
+  {
+    x = x + 1;
+    if (x > 15) output(x);
+  }
+  output(y);
+}
+

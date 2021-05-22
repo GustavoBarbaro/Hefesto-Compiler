@@ -76,7 +76,10 @@
 static char * nomeSalvo; // para uso geral em IDs
 static char * nomeVarSalvo; // para uso em atribuições
 static char * nomeFuncDecl; // para uso em declaracao de funções
-static char * nomeFunc; // para uso em funções
+
+static Pilha nome_funcao;
+static int func_inicializada = 0;
+
 static int numLinhaSalva;
 static int numLinhaSalvaF;
 static NoArvore* arvoreSalva; /* armazena árvore para retornar depois */
@@ -84,7 +87,7 @@ static int yylex();
 int yyerror(char *message);
 
 
-#line 88 "parse.tab.c"
+#line 91 "parse.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -565,14 +568,14 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    24,    24,    27,    40,    42,    43,    45,    45,    56,
-      56,    76,    79,    83,    83,   100,   103,   105,   117,   119,
-     130,   130,   147,   161,   173,   179,   191,   197,   198,   199,
-     200,   201,   203,   204,   210,   215,   222,   228,   231,   235,
-     241,   244,   251,   251,   263,   269,   271,   272,   273,   274,
-     275,   276,   278,   284,   286,   287,   290,   296,   298,   299,
-     301,   302,   303,   304,   309,   309,   319,   320,   326,   338,
-     339
+       0,    27,    27,    30,    43,    45,    46,    48,    48,    59,
+      59,    79,    82,    86,    86,   103,   106,   108,   120,   122,
+     133,   133,   150,   164,   176,   182,   194,   200,   201,   202,
+     203,   204,   206,   207,   213,   218,   225,   231,   234,   238,
+     245,   248,   255,   255,   267,   273,   275,   276,   277,   278,
+     279,   280,   282,   288,   290,   291,   294,   300,   302,   303,
+     305,   306,   307,   308,   313,   313,   330,   331,   337,   349,
+     350
 };
 #endif
 
@@ -1224,13 +1227,13 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* programa: decl_lista  */
-#line 25 "parse.y"
+#line 28 "parse.y"
                 { arvoreSalva = yyvsp[0];}
-#line 1230 "parse.tab.c"
+#line 1233 "parse.tab.c"
     break;
 
   case 3: /* decl_lista: decl_lista decl  */
-#line 28 "parse.y"
+#line 31 "parse.y"
                 { YYSTYPE temp = yyvsp[-1];
                 // adiciona os nós como irmãos
                 // pela recursividade a esquerda
@@ -1243,37 +1246,37 @@ yyreduce:
                     yyval = yyvsp[0];
                   }
                 }
-#line 1247 "parse.tab.c"
+#line 1250 "parse.tab.c"
     break;
 
   case 4: /* decl_lista: decl  */
-#line 40 "parse.y"
+#line 43 "parse.y"
                    {yyval = yyvsp[0];}
-#line 1253 "parse.tab.c"
+#line 1256 "parse.tab.c"
     break;
 
   case 5: /* decl: var_decl  */
-#line 42 "parse.y"
+#line 45 "parse.y"
                        {yyval = yyvsp[0];}
-#line 1259 "parse.tab.c"
+#line 1262 "parse.tab.c"
     break;
 
   case 6: /* decl: fun_decl  */
-#line 43 "parse.y"
+#line 46 "parse.y"
                        {yyval = yyvsp[0];}
-#line 1265 "parse.tab.c"
+#line 1268 "parse.tab.c"
     break;
 
   case 7: /* $@1: %empty  */
-#line 45 "parse.y"
+#line 48 "parse.y"
                           { nomeSalvo = copiaString(ID_nome);
                    numLinhaSalva = numlinha;
                  }
-#line 1273 "parse.tab.c"
+#line 1276 "parse.tab.c"
     break;
 
   case 8: /* var_decl: tipo_esp ID $@1 PVIRG  */
-#line 48 "parse.y"
+#line 51 "parse.y"
                     {   yyval = yyvsp[-3];
                         YYSTYPE vd;
                         vd = novoNoDecl(D_var);
@@ -1282,19 +1285,19 @@ yyreduce:
                         vd->tipo_c = yyvsp[-3]->tipo_c;
                         yyval->filho[0] = vd;
                     }
-#line 1286 "parse.tab.c"
+#line 1289 "parse.tab.c"
     break;
 
   case 9: /* $@2: %empty  */
-#line 56 "parse.y"
+#line 59 "parse.y"
                           { nomeSalvo = copiaString(ID_nome);
                    numLinhaSalva = numlinha;
                  }
-#line 1294 "parse.tab.c"
+#line 1297 "parse.tab.c"
     break;
 
   case 10: /* var_decl: tipo_esp ID $@2 ABRECOL NUM FECHACOL PVIRG  */
-#line 60 "parse.y"
+#line 63 "parse.y"
                             { yyval = yyvsp[-6];
                               YYSTYPE indice = novoNoExp(E_Num);
                               indice->atrib.val = atoi(NUM_val);
@@ -1310,36 +1313,36 @@ yyreduce:
                                 vd->tipo_c = Void;
                               yyval->filho[0] = vd; //nó de tipo fica como pai da declaracao
                             }
-#line 1314 "parse.tab.c"
+#line 1317 "parse.tab.c"
     break;
 
   case 11: /* tipo_esp: INT  */
-#line 76 "parse.y"
+#line 79 "parse.y"
                   { yyval = novoNoDecl(D_Tipo); // cria o nó para o tipo
                     yyval->tipo_c = Integer; 
                   }
-#line 1322 "parse.tab.c"
+#line 1325 "parse.tab.c"
     break;
 
   case 12: /* tipo_esp: VOID  */
-#line 79 "parse.y"
+#line 82 "parse.y"
                    { yyval = novoNoDecl(D_Tipo); // cria o nó para o tipo
                     yyval->tipo_c = Void; 
                    }
-#line 1330 "parse.tab.c"
+#line 1333 "parse.tab.c"
     break;
 
   case 13: /* $@3: %empty  */
-#line 83 "parse.y"
+#line 86 "parse.y"
                           {
                     nomeFuncDecl = copiaString(ID_nome);
                     numLinhaSalvaF = numlinha;
                  }
-#line 1339 "parse.tab.c"
+#line 1342 "parse.tab.c"
     break;
 
   case 14: /* fun_decl: tipo_esp ID $@3 ABREPAR params FECHAPAR bloco_decl  */
-#line 88 "parse.y"
+#line 91 "parse.y"
               {
                 yyval = yyvsp[-6];
                 YYSTYPE fun;
@@ -1351,25 +1354,25 @@ yyreduce:
                 fun->tipo_c = yyvsp[-6]->tipo_c;
                 yyval->filho[0] = fun;
               }
-#line 1355 "parse.tab.c"
+#line 1358 "parse.tab.c"
     break;
 
   case 15: /* params: param_lista  */
-#line 100 "parse.y"
+#line 103 "parse.y"
                           { yyval = yyvsp[0];
                             //$$->filho[0] = $1;
                           }
-#line 1363 "parse.tab.c"
+#line 1366 "parse.tab.c"
     break;
 
   case 16: /* params: VOID  */
-#line 103 "parse.y"
+#line 106 "parse.y"
                    { yyval = novoNoExp(E_Id); yyval->atrib.nome = "void"; yyval->tipo_c = Void;}
-#line 1369 "parse.tab.c"
+#line 1372 "parse.tab.c"
     break;
 
   case 17: /* param_lista: param_lista VIRG param  */
-#line 105 "parse.y"
+#line 108 "parse.y"
                                      {  YYSTYPE temp = yyvsp[-2];
                                         // adiciona os nós como irmãos
                                         if(temp != NULL){
@@ -1382,17 +1385,17 @@ yyreduce:
                                             yyval = yyvsp[0];
                                         }
                                      }
-#line 1386 "parse.tab.c"
+#line 1389 "parse.tab.c"
     break;
 
   case 18: /* param_lista: param  */
-#line 117 "parse.y"
+#line 120 "parse.y"
                     {yyval = yyvsp[0];}
-#line 1392 "parse.tab.c"
+#line 1395 "parse.tab.c"
     break;
 
   case 19: /* param: tipo_esp ID  */
-#line 119 "parse.y"
+#line 122 "parse.y"
                           { 
                    yyval = yyvsp[-1];
                    nomeSalvo = copiaString(ID_nome);
@@ -1404,19 +1407,19 @@ yyreduce:
                    par-> tipo_c = yyvsp[-1]->tipo_c;
                    yyval->filho[0] = par;
                  }
-#line 1408 "parse.tab.c"
+#line 1411 "parse.tab.c"
     break;
 
   case 20: /* $@4: %empty  */
-#line 130 "parse.y"
+#line 133 "parse.y"
                           {nomeSalvo = copiaString(ID_nome);
                    numLinhaSalva = numlinha;
                  }
-#line 1416 "parse.tab.c"
+#line 1419 "parse.tab.c"
     break;
 
   case 21: /* param: tipo_esp ID $@4 ABRECOL FECHACOL  */
-#line 134 "parse.y"
+#line 137 "parse.y"
               {    yyval = yyvsp[-4];
                    YYSTYPE par;
                    par = novoNoDecl(D_var);
@@ -1429,11 +1432,11 @@ yyreduce:
                    }
                    yyval->filho[0] = par;
               }
-#line 1433 "parse.tab.c"
+#line 1436 "parse.tab.c"
     break;
 
   case 22: /* bloco_decl: ABRECH local_decl stmt_lista FECHACH  */
-#line 147 "parse.y"
+#line 150 "parse.y"
                                                    { { YYSTYPE temp = yyvsp[-2];
                                                     // adiciona os nós como irmãos
                                                       if(temp != NULL){
@@ -1447,11 +1450,11 @@ yyreduce:
                                                       }
                                                     }      
                                                    }
-#line 1451 "parse.tab.c"
+#line 1454 "parse.tab.c"
     break;
 
   case 23: /* local_decl: local_decl var_decl  */
-#line 161 "parse.y"
+#line 164 "parse.y"
                                    { YYSTYPE temp = yyvsp[-1];
                                     // adiciona os nós como irmãos
                                       if(temp != NULL && temp->atrib.nome != "sem_local_decl" ){
@@ -1464,21 +1467,21 @@ yyreduce:
                                         yyval = yyvsp[0];
                                       }
                                     }
-#line 1468 "parse.tab.c"
+#line 1471 "parse.tab.c"
     break;
 
   case 24: /* local_decl: %empty  */
-#line 173 "parse.y"
+#line 176 "parse.y"
                       { 
                         //$$ = novoNoExp(E_Id);
                         //$$-> atrib.nome = "sem_local_decl";
                         yyval = NULL;
                     }
-#line 1478 "parse.tab.c"
+#line 1481 "parse.tab.c"
     break;
 
   case 25: /* stmt_lista: stmt_lista stmt  */
-#line 179 "parse.y"
+#line 182 "parse.y"
                               { YYSTYPE temp = yyvsp[-1];
                                     // adiciona os nós como irmãos
                                       if(temp != NULL){
@@ -1491,127 +1494,128 @@ yyreduce:
                                         yyval = yyvsp[0];
                                       }
                                     }
-#line 1495 "parse.tab.c"
+#line 1498 "parse.tab.c"
     break;
 
   case 26: /* stmt_lista: %empty  */
-#line 191 "parse.y"
+#line 194 "parse.y"
                       { 
                         //$$ = novoNoExp(E_Id);
                         //$$-> atrib.nome = "sem_stmt_lista";
                         yyval = NULL;
                     }
-#line 1505 "parse.tab.c"
+#line 1508 "parse.tab.c"
     break;
 
   case 27: /* stmt: exp_decl  */
-#line 197 "parse.y"
+#line 200 "parse.y"
                        {yyval = yyvsp[0];}
-#line 1511 "parse.tab.c"
+#line 1514 "parse.tab.c"
     break;
 
   case 28: /* stmt: bloco_decl  */
-#line 198 "parse.y"
+#line 201 "parse.y"
                          {yyval = yyvsp[0];}
-#line 1517 "parse.tab.c"
+#line 1520 "parse.tab.c"
     break;
 
   case 29: /* stmt: sel_decl  */
-#line 199 "parse.y"
+#line 202 "parse.y"
                        {yyval = yyvsp[0];}
-#line 1523 "parse.tab.c"
+#line 1526 "parse.tab.c"
     break;
 
   case 30: /* stmt: iter_decl  */
-#line 200 "parse.y"
+#line 203 "parse.y"
                         {yyval = yyvsp[0];}
-#line 1529 "parse.tab.c"
+#line 1532 "parse.tab.c"
     break;
 
   case 31: /* stmt: ret_decl  */
-#line 201 "parse.y"
+#line 204 "parse.y"
                        {yyval = yyvsp[0];}
-#line 1535 "parse.tab.c"
+#line 1538 "parse.tab.c"
     break;
 
   case 32: /* exp_decl: exp PVIRG  */
-#line 203 "parse.y"
+#line 206 "parse.y"
                         {yyval = yyvsp[-1];}
-#line 1541 "parse.tab.c"
+#line 1544 "parse.tab.c"
     break;
 
   case 33: /* exp_decl: PVIRG  */
-#line 204 "parse.y"
+#line 207 "parse.y"
                     { 
                         //$$ = novoNoExp(E_Id);
                         //$$->atrib.nome = "expr_vazia";
                         yyval = NULL;
                     }
-#line 1551 "parse.tab.c"
+#line 1554 "parse.tab.c"
     break;
 
   case 34: /* sel_decl: IF ABREPAR exp FECHAPAR stmt  */
-#line 211 "parse.y"
+#line 214 "parse.y"
                 { yyval = novoNoStmt(S_If);
                   yyval->filho[0] = yyvsp[-2];
                   yyval->filho[1] = yyvsp[0];
                 }
-#line 1560 "parse.tab.c"
+#line 1563 "parse.tab.c"
     break;
 
   case 35: /* sel_decl: IF ABREPAR exp FECHAPAR stmt ELSE stmt  */
-#line 216 "parse.y"
+#line 219 "parse.y"
                 { yyval = novoNoStmt(S_If);
                   yyval->filho[0] = yyvsp[-4];
                   yyval->filho[1] = yyvsp[-2];
                   yyval->filho[2] = yyvsp[0];
                 }
-#line 1570 "parse.tab.c"
+#line 1573 "parse.tab.c"
     break;
 
   case 36: /* iter_decl: WHILE ABREPAR exp FECHAPAR stmt  */
-#line 223 "parse.y"
+#line 226 "parse.y"
                 { yyval = novoNoStmt(S_While);
                   yyval->filho[0] = yyvsp[-2];
                   yyval->filho[1] = yyvsp[0];
                 }
-#line 1579 "parse.tab.c"
+#line 1582 "parse.tab.c"
     break;
 
   case 37: /* ret_decl: RETURN PVIRG  */
-#line 228 "parse.y"
+#line 231 "parse.y"
                            { 
                         yyval = novoNoStmt(S_Retorno);
                     }
-#line 1587 "parse.tab.c"
+#line 1590 "parse.tab.c"
     break;
 
   case 38: /* ret_decl: RETURN exp PVIRG  */
-#line 231 "parse.y"
+#line 234 "parse.y"
                                {yyval = novoNoStmt(S_Retorno);
                                 yyval->filho[0] = yyvsp[-1];
                                 }
-#line 1595 "parse.tab.c"
+#line 1598 "parse.tab.c"
     break;
 
   case 39: /* exp: var IGUAL exp  */
-#line 236 "parse.y"
+#line 239 "parse.y"
                 { yyval = novoNoStmt(S_Atrib);
                   yyval->filho[0] = yyvsp[-2];
                   yyval->filho[1] = yyvsp[0];
+                  yyval->tipo_c = Integer;
                   yyval->atrib.op = IGUAL; //IGUAL
                 }
-#line 1605 "parse.tab.c"
+#line 1609 "parse.tab.c"
     break;
 
   case 40: /* exp: simples_exp  */
-#line 241 "parse.y"
+#line 245 "parse.y"
                           {yyval = yyvsp[0];}
-#line 1611 "parse.tab.c"
+#line 1615 "parse.tab.c"
     break;
 
   case 41: /* var: ID  */
-#line 244 "parse.y"
+#line 248 "parse.y"
                  { nomeSalvo = copiaString(ID_nome);
                    numLinhaSalva = numlinha;
                    yyval = novoNoExp(E_Id);
@@ -1619,19 +1623,19 @@ yyreduce:
                    yyval->numlinha = numLinhaSalva;
                    yyval->tipo_c = Void;// precisa buscar na TS
                  }
-#line 1623 "parse.tab.c"
+#line 1627 "parse.tab.c"
     break;
 
   case 42: /* $@5: %empty  */
-#line 251 "parse.y"
+#line 255 "parse.y"
                  { nomeVarSalvo = copiaString(ID_nome);
                    numLinhaSalva = numlinha;
                  }
-#line 1631 "parse.tab.c"
+#line 1635 "parse.tab.c"
     break;
 
   case 43: /* var: ID $@5 ABRECOL exp FECHACOL  */
-#line 255 "parse.y"
+#line 259 "parse.y"
                  {
                    yyval = novoNoExp(E_Id);
                    yyval->atrib.nome = nomeVarSalvo;
@@ -1639,180 +1643,187 @@ yyreduce:
                    yyval->filho[0] = yyvsp[-1];
                    yyval->tipo_c = Integer; //certeza. v[indice] é inteiro
                  }
-#line 1643 "parse.tab.c"
+#line 1647 "parse.tab.c"
     break;
 
   case 44: /* simples_exp: soma_exp relacional soma_exp  */
-#line 264 "parse.y"
+#line 268 "parse.y"
                 { yyval = novoNoExp(E_Op);
                   yyval->filho[0] = yyvsp[-2];
                   yyval->filho[1] = yyvsp[0];
                   yyval->atrib.op = yyvsp[-1]->atrib.op; // Token recebido pelo relacional
                 }
-#line 1653 "parse.tab.c"
+#line 1657 "parse.tab.c"
     break;
 
   case 45: /* simples_exp: soma_exp  */
-#line 269 "parse.y"
+#line 273 "parse.y"
                        {yyval = yyvsp[0];}
-#line 1659 "parse.tab.c"
+#line 1663 "parse.tab.c"
     break;
 
   case 46: /* relacional: MENIGUAL  */
-#line 271 "parse.y"
+#line 275 "parse.y"
                       {yyval = novoNoExp(E_Id); yyval->atrib.op = MENIGUAL;}
-#line 1665 "parse.tab.c"
+#line 1669 "parse.tab.c"
     break;
 
   case 47: /* relacional: MENOR  */
-#line 272 "parse.y"
+#line 276 "parse.y"
                    {yyval = novoNoExp(E_Id); yyval->atrib.op = MENOR;}
-#line 1671 "parse.tab.c"
+#line 1675 "parse.tab.c"
     break;
 
   case 48: /* relacional: MAIOR  */
-#line 273 "parse.y"
+#line 277 "parse.y"
                    {yyval = novoNoExp(E_Id); yyval->atrib.op = MAIOR;}
-#line 1677 "parse.tab.c"
+#line 1681 "parse.tab.c"
     break;
 
   case 49: /* relacional: MAIIGUAL  */
-#line 274 "parse.y"
+#line 278 "parse.y"
                       {yyval = novoNoExp(E_Id); yyval->atrib.op = MAIIGUAL;}
-#line 1683 "parse.tab.c"
+#line 1687 "parse.tab.c"
     break;
 
   case 50: /* relacional: IGUALIGUAL  */
-#line 275 "parse.y"
+#line 279 "parse.y"
                         {yyval = novoNoExp(E_Id); yyval->atrib.op = IGUALIGUAL;}
-#line 1689 "parse.tab.c"
+#line 1693 "parse.tab.c"
     break;
 
   case 51: /* relacional: DIF  */
-#line 276 "parse.y"
+#line 280 "parse.y"
                  {yyval = novoNoExp(E_Id); yyval->atrib.op = DIF;}
-#line 1695 "parse.tab.c"
+#line 1699 "parse.tab.c"
     break;
 
   case 52: /* soma_exp: soma_exp soma termo  */
-#line 279 "parse.y"
+#line 283 "parse.y"
                 { yyval = novoNoExp(E_Op);
                   yyval->filho[0] = yyvsp[-2];
                   yyval->filho[1] = yyvsp[0];
                   yyval->atrib.op = yyvsp[-1]->atrib.op; // Token recebido pelo "soma"
                 }
-#line 1705 "parse.tab.c"
+#line 1709 "parse.tab.c"
     break;
 
   case 53: /* soma_exp: termo  */
-#line 284 "parse.y"
+#line 288 "parse.y"
                     {yyval = yyvsp[0];}
-#line 1711 "parse.tab.c"
+#line 1715 "parse.tab.c"
     break;
 
   case 54: /* soma: MAIS  */
-#line 286 "parse.y"
+#line 290 "parse.y"
                    {yyval = novoNoExp(E_Id); yyval->atrib.op = MAIS;}
-#line 1717 "parse.tab.c"
+#line 1721 "parse.tab.c"
     break;
 
   case 55: /* soma: MENOS  */
-#line 287 "parse.y"
+#line 291 "parse.y"
                     {yyval = novoNoExp(E_Id); yyval->atrib.op = MENOS;}
-#line 1723 "parse.tab.c"
+#line 1727 "parse.tab.c"
     break;
 
   case 56: /* termo: termo mult fator  */
-#line 291 "parse.y"
+#line 295 "parse.y"
                 { yyval = novoNoExp(E_Op);
                   yyval->filho[0] = yyvsp[-2];
                   yyval->filho[1] = yyvsp[0];
                   yyval->atrib.op = yyvsp[-1]->atrib.op; // Token recebido pelo "mult"
                 }
-#line 1733 "parse.tab.c"
+#line 1737 "parse.tab.c"
     break;
 
   case 57: /* termo: fator  */
-#line 296 "parse.y"
+#line 300 "parse.y"
                     {yyval = yyvsp[0];}
-#line 1739 "parse.tab.c"
+#line 1743 "parse.tab.c"
     break;
 
   case 58: /* mult: VEZES  */
-#line 298 "parse.y"
+#line 302 "parse.y"
                     {yyval = novoNoExp(E_Id); yyval->atrib.op = VEZES;}
-#line 1745 "parse.tab.c"
+#line 1749 "parse.tab.c"
     break;
 
   case 59: /* mult: DIV  */
-#line 299 "parse.y"
+#line 303 "parse.y"
                   {yyval = novoNoExp(E_Id); yyval->atrib.op = DIV;}
-#line 1751 "parse.tab.c"
+#line 1755 "parse.tab.c"
     break;
 
   case 60: /* fator: ABREPAR exp FECHAPAR  */
-#line 301 "parse.y"
+#line 305 "parse.y"
                                    {yyval = yyvsp[-2];}
-#line 1757 "parse.tab.c"
+#line 1761 "parse.tab.c"
     break;
 
   case 61: /* fator: var  */
-#line 302 "parse.y"
+#line 306 "parse.y"
                   {yyval = yyvsp[0];}
-#line 1763 "parse.tab.c"
+#line 1767 "parse.tab.c"
     break;
 
   case 62: /* fator: ativacao  */
-#line 303 "parse.y"
+#line 307 "parse.y"
                        {yyval = yyvsp[0];}
-#line 1769 "parse.tab.c"
+#line 1773 "parse.tab.c"
     break;
 
   case 63: /* fator: NUM  */
-#line 304 "parse.y"
+#line 308 "parse.y"
                   { yyval = novoNoExp(E_Num);
                     yyval->atrib.val = atoi(NUM_val);
                     yyval->tipo_c = Integer;
                   }
-#line 1778 "parse.tab.c"
+#line 1782 "parse.tab.c"
     break;
 
   case 64: /* $@6: %empty  */
-#line 309 "parse.y"
-                 { nomeFunc = copiaString(ID_nome);
-                   numLinhaSalva = numlinha;
+#line 313 "parse.y"
+                 { 
+
+                    if (func_inicializada == 0){//primeira vez, então inicializar pilha de nomes
+                        inicializaPilha(&nome_funcao);
+                        func_inicializada = 1;
+                    }
+
+                    push (&nome_funcao, copiaString(ID_nome));
+                    numLinhaSalva = numlinha;
                  }
-#line 1786 "parse.tab.c"
+#line 1797 "parse.tab.c"
     break;
 
   case 65: /* ativacao: ID $@6 ABREPAR args FECHAPAR  */
-#line 313 "parse.y"
+#line 324 "parse.y"
                  { yyval = novoNoStmt(S_Chamada);
                    yyval->filho[1] = yyvsp[-1]; // filho direito
-                   yyval->atrib.nome = nomeFunc;
+                   yyval->atrib.nome = pop(&nome_funcao);
                    yyval->numlinha = numLinhaSalva;
                  }
-#line 1796 "parse.tab.c"
+#line 1807 "parse.tab.c"
     break;
 
   case 66: /* args: arg_lista  */
-#line 319 "parse.y"
+#line 330 "parse.y"
                         {yyval = yyvsp[0];}
-#line 1802 "parse.tab.c"
+#line 1813 "parse.tab.c"
     break;
 
   case 67: /* args: %empty  */
-#line 320 "parse.y"
+#line 331 "parse.y"
                       { 
                         //$$ = novoNoExp(E_Id);
                         //$$-> atrib.nome = "sem_args";
                         yyval = NULL;
                     }
-#line 1812 "parse.tab.c"
+#line 1823 "parse.tab.c"
     break;
 
   case 68: /* arg_lista: arg_lista VIRG exp  */
-#line 326 "parse.y"
+#line 337 "parse.y"
                                  {  YYSTYPE temp = yyvsp[-2];
                                     // adiciona os nós como irmãos
                                     if(temp != NULL){
@@ -1825,23 +1836,23 @@ yyreduce:
                                         yyval = yyvsp[0];
                                     }
                                  }
-#line 1829 "parse.tab.c"
+#line 1840 "parse.tab.c"
     break;
 
   case 69: /* arg_lista: param  */
-#line 338 "parse.y"
+#line 349 "parse.y"
                     {yyval = yyvsp[0];}
-#line 1835 "parse.tab.c"
+#line 1846 "parse.tab.c"
     break;
 
   case 70: /* arg_lista: exp  */
-#line 339 "parse.y"
+#line 350 "parse.y"
                   {yyval = yyvsp[0];}
-#line 1841 "parse.tab.c"
+#line 1852 "parse.tab.c"
     break;
 
 
-#line 1845 "parse.tab.c"
+#line 1856 "parse.tab.c"
 
       default: break;
     }
@@ -2035,7 +2046,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 341 "parse.y"
+#line 352 "parse.y"
 
 
 int yyerror(char * message){

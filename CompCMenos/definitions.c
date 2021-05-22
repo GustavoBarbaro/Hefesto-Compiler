@@ -474,3 +474,38 @@ void salva_quadrupla (char textinho[], char c_1[], char c_2[], char c_3[], int v
     free (buffer_2);
     free (buffer_3);
 }
+
+
+
+
+//======================================= PILHA ===============================================
+
+
+
+void inicializaPilha(Pilha *P){
+    P = malloc(sizeof(Pilha*));
+    P->numelementos = 0;
+    P->topo = NULL;
+}
+
+void push(Pilha * P, char * nome){
+    TNome * NomeStr = malloc(sizeof(TNome*));
+    NomeStr->nome = strdup(nome);
+    NomeStr->abaixo = P->topo;
+    P->topo = NomeStr;
+    P->numelementos ++;
+}
+
+char* pop(Pilha *P){
+    char *nome = NULL;
+    if (P->numelementos != 0){// pilha não vazia
+        nome = strdup(P->topo->nome);
+        TNome *topoAntigo;
+        topoAntigo = P->topo;
+        P->topo = topoAntigo->abaixo;
+        P->numelementos --;
+        nome = strdup(topoAntigo->nome);
+        free(topoAntigo);
+    }
+    return nome;
+}

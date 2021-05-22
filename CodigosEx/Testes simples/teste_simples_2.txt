@@ -1,0 +1,15 @@
+/* Um programa simples com if */
+
+void main(void)
+{  
+  int x; int y; int z;
+  x = 10;
+  y = 15;
+  z = 0;
+  if (x < y) 
+  {
+    z = 1;
+    output(z);
+  }
+}
+
