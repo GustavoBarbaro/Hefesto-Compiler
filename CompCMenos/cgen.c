@@ -1,6 +1,6 @@
 #include "definitions.h"
 
-static int tempnum = 1;
+static int tempnum = 0;
 static int labelnum = 0;
 static int numenderecos = 0;
 static int param = 0;
@@ -213,7 +213,7 @@ static void genExp( NoArvore * arv)
     case E_Num :
       tempnum++;
 
-      //printf("(LOAD, $t%d, %d,  )\n", tempnum, arv->atrib.val);
+      //printf("(LOAD, $t%d, %d,  )\n\n", tempnum, arv->atrib.val);
       salva_quadrupla("LOAD", "$t", "", " ", tempnum, arv->atrib.val, -1, 1);
 
       numenderecos++;
