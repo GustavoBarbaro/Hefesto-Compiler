@@ -208,6 +208,9 @@ static void genExp( NoArvore * arv){
 
 			p1 = arv->filho[0];
 
+			//evitando alocar um registrador para o void desnecessariamente
+			if (strcmp (arv->atrib.nome, "void") == 0) break;
+
 			if (p1 != NULL){ //para tratar do vetor, quer dizer que tem filho, ou seja, o indice
 
 				salva_quadrupla("LOAD", "$t", arv->filho[0]->atrib.nome, " ", ++tempnum, -1, -1, 1);
