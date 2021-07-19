@@ -72,7 +72,6 @@ static void genStmt( NoArvore * arv)
 
          break;
       case S_Atrib:
-         tempnum++;
          p1 = arv->filho[0];
          p2 = arv->filho[1];
          push(&var_nome, arv->filho[0]->atrib.nome);
@@ -93,7 +92,7 @@ static void genStmt( NoArvore * arv)
          cGen(p1);
 
          //printf("(RET, $t%d,  ,  )\n", tempnum++);
-         salva_quadrupla("RET", "$t", " ", " ", tempnum++, 0, 0, 2);
+         salva_quadrupla("RET", "$t", " ", " ", tempnum, 0, 0, 2);
 
          break;
       case S_Chamada:
@@ -102,13 +101,12 @@ static void genStmt( NoArvore * arv)
          //printf("NOME DO NO %d\n\n", arv->filho[1]->tipo_de_no);
 
          int npar = 0;
-         tempnum++; //acho que tempnum ta a mais
          while(p1!= NULL){
             flag_irmao = 1; //se for 1 nao avança o irmao
             cGen(p1);
 
             //printf("(PARAM, $t%d, ,  )\n", tempnum++);
-            salva_quadrupla("PARAM", "$t", " ", " ", tempnum++, 0, 0, 2);
+            salva_quadrupla("PARAM", "$t", " ", " ", tempnum, 0, 0, 2);
 
             p1 = p1->irmao;
             npar++;
@@ -149,7 +147,7 @@ static void genDecl( NoArvore * arv)
          int i;
 
          for (i = 0; i < param_cont; i++){
-            salva_quadrupla("LOAD", "$t", parametros_vet[i], " ", tempnum++, -1, -1, 1);
+            salva_quadrupla("LOAD", "$t", parametros_vet[i], " ", ++tempnum, -1, -1, 1);
          }
 
          param = 0;
@@ -211,16 +209,14 @@ static void genExp( NoArvore * arv)
   switch (arv->tipo.exp) {
 
     case E_Num :
-      tempnum++;
 
       //printf("(LOAD, $t%d, %d,  )\n\n", tempnum, arv->atrib.val);
-      salva_quadrupla("LOAD", "$t", "", " ", tempnum, arv->atrib.val, -1, 1);
+      salva_quadrupla("LOAD", "$t", "", " ", ++tempnum, arv->atrib.val, -1, 1);
 
       numenderecos++;
       break;
     
     case E_Id :
-      tempnum++;
 
       //printf("(LOAD, $t%d, %s,  )\n", tempnum, arv->atrib.nome);
       //salva_quadrupla("LOAD", "$t", arv->atrib.nome, " ", tempnum, -1, -1, 1);
@@ -229,13 +225,13 @@ static void genExp( NoArvore * arv)
 
       if (p1 != NULL){ //para tratar do vetor, quer dizer que tem filho, ou seja, o indice
 
-        salva_quadrupla("LOAD", "$t", arv->filho[0]->atrib.nome, " ", tempnum, -1, -1, 1);
+        salva_quadrupla("LOAD", "$t", arv->filho[0]->atrib.nome, " ", ++tempnum, -1, -1, 1);
 
         salva_quadrupla("LOAD", "$t", arv->atrib.nome, "$t", ++tempnum, -1, tempnum, 0);
 
       }
       else{
-        salva_quadrupla("LOAD", "$t", arv->atrib.nome, " ", tempnum, -1, -1, 1);
+        salva_quadrupla("LOAD", "$t", arv->atrib.nome, " ", ++tempnum, -1, -1, 1);
       }
       
 
@@ -249,8 +245,8 @@ static void genExp( NoArvore * arv)
          int t1 = tempnum;
          cGen(p2);
          int t2 = tempnum;
-         tempnum++;
          //printf("\n\t\tNUMEND:%d\n", numenderecos);
+         tempnum++;
          switch (arv->atrib.op) {
             case MAIS :
 
