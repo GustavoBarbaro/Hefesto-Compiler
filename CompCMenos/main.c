@@ -8,36 +8,48 @@ FILE * arq_cod_fonte;
 bool Erro;
 int main(){
 
-    arq_cod_fonte = fopen("sample.c","r");
-    if(arq_cod_fonte == NULL){
-        printf("Falha na leitura do código fonte\n");
-    }
+	arq_cod_fonte = fopen("sample.c","r");
+	if(arq_cod_fonte == NULL){
+		printf("Falha na leitura do código fonte\n");
+	}
 
-    printf("\n====================== Análise Léxica ===========================\n");
-    imprimeTokens("sample.c");    
-    fclose(arq_cod_fonte);
-    arq_cod_fonte = fopen("sample.c","r");
-    numlinha = 1;
+	printf("\n====================== Análise Léxica ===========================\n");
+	imprimeTokens("sample.c");    
+	fclose(arq_cod_fonte);
+	arq_cod_fonte = fopen("sample.c","r");
+	numlinha = 1;
 
-    
-    NoArvore* arvoreSintatica;
-    arvoreSintatica = parse();
-    printf("\n\n==================== Árvore Sintática ====================\n\n");
-    if(!Erro)
-        imprimeArvore(arvoreSintatica);
-    printf("\n\n");
+	
+	NoArvore* arvoreSintatica;
+	arvoreSintatica = parse();
+	printf("\n\n==================== Árvore Sintática ====================\n\n");
+	if(!Erro)
+		imprimeArvore(arvoreSintatica);
+	printf("\n\n");
 
-    montaTabSim(arvoreSintatica);
-    if(!Erro)
-        checaTipos(arvoreSintatica);
+	montaTabSim(arvoreSintatica);
+	if(!Erro)
+		checaTipos(arvoreSintatica);
 
 
-    printf("\n\n============  Código Intermediário (3 endereços)  ============\n\n");
-    if(!Erro)
-        geraCod(arvoreSintatica);
-        printa_lista();
-    fclose(arq_cod_fonte);
-    return 0;
+	printf("\n\n============  Código Intermediário (3 endereços)  ============\n\n");
+	if(!Erro)
+		geraCod(arvoreSintatica);
+	printa_lista();
+
+
+	printf("\n\n==================== Código Assembly ====================\n\n");
+
+	gera_cod_Assembly();
+
+
+
+
+
+	lista_free();
+	lista_free_asm();
+	fclose(arq_cod_fonte);
+	return 0;
 }
 
 
