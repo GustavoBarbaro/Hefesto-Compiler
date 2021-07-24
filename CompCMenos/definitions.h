@@ -115,9 +115,19 @@ void geraCod(NoArvore * arv);
 
 void lista_add (char nome[], char campo_1[], char campo_2[], char campo_3[]);
 
+void lista_add_asm (char nome[], char campo_1[], char campo_2[], char campo_3[]);
+
 void lista_free();
 
+void lista_free_asm();
+
 void printa_lista ();
+
+void printa_lista_asm ();
+
+void retorna_posicao (int posicao, char** c1, char** c2, char** c3, char** c4);
+
+int retorna_max_quadrupla ();
 
 void salva_quadrupla (char textinho[], char c_1[], char c_2[], char c_3[], int var_c_1, int var_c_2, int var_c_3, int m_flag);
 
@@ -140,3 +150,13 @@ void push(Pilha *P, char *nome);
 char* pop(Pilha *P);
 void inicializaPilha(Pilha *P);
 
+void gera_cod_Assembly ();
+
+
+
+//============================== OTIMIZANDO REGISTRADORES ==============================
+
+
+int incrementa_reg ();
+
+void zera_reg_FinalFunc ();
