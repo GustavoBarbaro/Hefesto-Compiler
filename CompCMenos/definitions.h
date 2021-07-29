@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_TAM_TOKEN 100
 
@@ -160,3 +161,24 @@ void gera_cod_Assembly ();
 int incrementa_reg ();
 
 void zera_reg_FinalFunc ();
+
+void libera_reg (int libera);
+
+//============================== lista labels ==============================
+
+
+void add_label_lista (int num_linha, char nome []);
+
+void lista_label_free ();
+
+void printa_lista_labels ();
+
+//============================== lista variaveis ==============================
+
+void add_var_lista (char nome [], char escopo [], char tipo [], int posicao);
+
+void lista_var_free ();
+
+int retorna_var_posicao (char nome_var [], char escopo []);
+
+int testa_numero(char s []);

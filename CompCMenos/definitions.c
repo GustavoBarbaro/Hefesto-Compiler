@@ -633,7 +633,7 @@ char* pop(Pilha *P){
 
 //============================== OTIMIZANDO REGISTRADORES ==============================
 
-#define max_reg 28
+#define max_reg 27
 
 int reg[max_reg] = {0};
 
@@ -661,4 +661,165 @@ void zera_reg_FinalFunc (){
 	for (i = 0; i <= max_reg; i++){
 		reg[i] = 0; //liberando os registradores
 	}
+}
+
+
+void libera_reg (int libera){
+
+	reg[libera] = 0;
+}
+
+
+
+//============================== lista labels ==============================
+
+
+typedef struct lab {
+	int num_linha;
+	char * nome;
+
+	struct lab * next;
+} t_label;
+
+
+t_label *cabeca_label = NULL; //começo da lista de labels
+
+void add_label_lista (int num_linha, char nome []){
+	if (cabeca_label == NULL){
+		cabeca_label = (struct lab *) malloc (sizeof (struct lab));
+
+		cabeca_label->num_linha = num_linha;
+		cabeca_label->nome = strdup (nome);
+		cabeca_label->next = NULL;
+		return;
+	}
+
+	t_label * no_atual = cabeca_label;
+
+	while (no_atual->next){
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct lab *) malloc (sizeof (struct lab));
+
+	no_atual->next->num_linha = num_linha;
+	no_atual->next->nome = strdup(nome);
+	no_atual->next->next = NULL;
+}
+
+
+void lista_label_free (){
+	t_label * no_atual = cabeca_label;
+	while (no_atual){
+		t_label * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->nome);
+		free(temp);
+	}
+	no_atual = NULL;
+	cabeca_label = NULL;
+}
+
+
+void printa_lista_labels (){
+
+	t_label * no_atual = cabeca_label;
+
+	while (no_atual){
+		t_label * temp = no_atual;
+		no_atual = no_atual->next;
+
+		printf("NOME: %s\n NUM_LINHA: %d\n\n", temp->nome, temp->num_linha);
+
+	}
+
+}
+
+
+//============================== lista variaveis ==============================
+
+
+typedef struct var {
+	char * nome;
+	char * escopo;
+	char * tipo;
+	int posicao;
+
+	struct var * next;
+} t_var;
+
+t_var *cabeca_var = NULL; //comeco da lista de vars
+
+void add_var_lista (char nome [], char escopo [], char tipo [], int posicao){
+	if (cabeca_var == NULL){
+		cabeca_var = (struct var *) malloc (sizeof (struct var));
+
+		cabeca_var->nome = strdup (nome);
+		cabeca_var->escopo = strdup (escopo);
+		cabeca_var->tipo = strdup (tipo);
+		cabeca_var->posicao = posicao;
+		return;
+	}
+
+	t_var * no_atual = cabeca_var;
+
+	while (no_atual->next){
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct var *) malloc (sizeof (struct var));
+
+	no_atual->next->nome = strdup (nome);
+	no_atual->next->escopo = strdup (escopo);
+	no_atual->next->tipo = strdup (tipo);
+	no_atual->next->posicao = posicao;
+	no_atual->next->next = NULL;
+}
+
+void lista_var_free (){
+	t_var * no_atual = cabeca_var;
+	while(no_atual){
+		t_var * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->nome);
+		free(temp->escopo);
+		free(temp->tipo);
+	}
+	no_atual = NULL;
+	cabeca_var = NULL;
+}
+
+int retorna_var_posicao (char nome_var [], char escopo []){
+
+	t_var * no_atual = cabeca_var;
+	int var_posicao = 0;
+
+	while (no_atual != NULL){
+		t_var * temp = no_atual;
+
+		if (strcmp(nome_var, no_atual->nome) == 0 && strcmp(escopo, no_atual->escopo) == 0){
+			var_posicao = no_atual->posicao;
+			break;
+		}
+
+		no_atual = no_atual->next;
+	}
+	return var_posicao;
+}
+
+int testa_numero(char s []){
+
+	int result = 1;
+	for(int i = 0; i<strlen(s);i++)
+	{
+		if(!isdigit(s[i]))
+		{
+			result = 0;
+			break;
+		}
+	}
+
+	return result;
+	//if (result == 1){printf("EH NUMERO\n");}
+	//if (result == 0){printf("NAO EH NUMERO\n");}
 }

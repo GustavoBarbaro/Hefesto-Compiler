@@ -48,6 +48,8 @@ int main(){
 
 	lista_free();
 	lista_free_asm();
+	lista_label_free ();
+	lista_var_free ();
 	fclose(arq_cod_fonte);
 	return 0;
 }

@@ -85,9 +85,11 @@ static void genStmt( NoArvore * arv){
 
 			//printf("(ASSIGN, $t%d, $t%d,  )\n",t1, t2);
 			salva_quadrupla("ASSIGN", "$t", "$t", " ", t1, t2, 0, 1);
+			libera_reg (t2);
 
 			//printf("(STORE, %s, $t%d,  )\n",nome_var, t1);
 			salva_quadrupla("STORE", pop(&var_nome), "$t", " ", -1, t1, 0, 1);
+			libera_reg (t1);
 		break;
 
 		case S_Retorno:
@@ -224,6 +226,7 @@ static void genExp( NoArvore * arv){
 
 				tempnum = incrementa_reg();
 				salva_quadrupla("LOAD", "$t", arv->atrib.nome, "$t", tempnum, -1, aux_tempnum, 0);
+				libera_reg (aux_tempnum);
 			}
 			else{
 				tempnum = incrementa_reg();
@@ -309,13 +312,15 @@ static void genExp( NoArvore * arv){
 					//printf("Operador desconhecido\n");
 					Erro = 1;
 				break;
-			} 
+			}
+			libera_reg(t1);
+			libera_reg(t2);
 		break; 
 
 		default:
 		break;
  	}
-} 
+}
 
 static void cGen( NoArvore * arv){
 	if (arv != NULL){
