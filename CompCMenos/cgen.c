@@ -2,6 +2,7 @@
 
 static int tempnum = 0;
 static int aux_tempnum = 0;
+static int reg_reverse = 0;
 static int labelnum = 0;
 static int numenderecos = 0;
 static int param = 0;
@@ -74,7 +75,7 @@ static void genStmt( NoArvore * arv){
 			salva_quadrupla("LABEL", "L", " ", " ", l2, 0, 0, 2);
 
 			break;
-			case S_Atrib:
+		case S_Atrib:
 			p1 = arv->filho[0];
 			p2 = arv->filho[1];
 			push(&var_nome, arv->filho[0]->atrib.nome);
@@ -87,9 +88,17 @@ static void genStmt( NoArvore * arv){
 			salva_quadrupla("ASSIGN", "$t", "$t", " ", t1, t2, 0, 1);
 			libera_reg (t2);
 
-			//printf("(STORE, %s, $t%d,  )\n",nome_var, t1);
-			salva_quadrupla("STORE", pop(&var_nome), "$t", " ", -1, t1, 0, 1);
-			libera_reg (t1);
+			if (p1->filho[0] != NULL){ //quer dizer que tem filho ou seja o vetor
+				reg_reverse = incrementa_reg_reverse (t1);
+				salva_quadrupla("STORE", pop(&var_nome), "$t", "$t", -1, t1, reg_reverse, 0);	
+				libera_reg(reg_reverse);
+				libera_reg(t1);
+			}
+			else{
+				//printf("(STORE, %s, $t%d,  )\n",nome_var, t1);
+				salva_quadrupla("STORE", pop(&var_nome), "$t", " ", -1, t1, 0, 1);
+				libera_reg (t1);
+			}
 		break;
 
 		case S_Retorno:

@@ -164,6 +164,8 @@ void zera_reg_FinalFunc ();
 
 void libera_reg (int libera);
 
+int incrementa_reg_reverse (int num);
+
 //============================== lista labels ==============================
 
 
@@ -172,6 +174,22 @@ void add_label_lista (int num_linha, char nome []);
 void lista_label_free ();
 
 void printa_lista_labels ();
+
+int retorna_label_linha_asm (char label []);
+
+void fix_beqs ();
+
+void fix_jumps ();
+
+void lista_add_aux (char nome[], char campo_1[], char campo_2[], char campo_3[]);
+
+void lista_free_aux();
+
+void retorna_posicao_aux (int posicao, char** c1, char** c2, char** c3, char** c4);
+
+void retorna_posicao_asm (int posicao, char** c1, char** c2, char** c3, char** c4);
+
+void insere_jump_main ();
 
 //============================== lista variaveis ==============================
 

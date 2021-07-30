@@ -17,6 +17,10 @@ void gera_cod_Assembly (){
 	char *aux_tam_vet;
 	int max_cont, i, vars_cont = 0;
 	int tam_vet = 0;
+	int temp_int = 0;
+	int linha_da_main = 0;
+
+	int cont_asm = 1;
 
 
 	aux_vars_cont = malloc (sizeof (char) * 15);
@@ -31,13 +35,6 @@ void gera_cod_Assembly (){
 
 	max_cont = retorna_max_quadrupla();
 
-	retorna_posicao (28, &c1, &c2, &c3, &c4);	
-
-	printf("%s\n", c1);
-	printf("%s\n", c2);
-	printf("%s\n", c3);
-	printf("%s\n", c4);
-
 
 
 	for (i = 0; i <= max_cont; i++){ //vai percorrer cada quadrupla, analisar cada uma aqui dentro
@@ -45,24 +42,31 @@ void gera_cod_Assembly (){
 		retorna_posicao (i, &c1, &c2, &c3, &c4);
 
 		if (strcmp (c1, "ADD") == 0){
-			lista_add_asm("add", c2, c3, c4);	
+			lista_add_asm("add", c2, c3, c4);
+			cont_asm++;	
 		}
 		else if (strcmp (c1, "SUB") == 0){
 			lista_add_asm("sub", c2, c3, c4);			
+			cont_asm++;
 		}
 		else if (strcmp (c1, "MUL") == 0){
 			lista_add_asm("mult", c2, c3, c4);			
+			cont_asm++;
 		}
 		else if (strcmp (c1, "DIV") == 0){
 			lista_add_asm("div", c2, c3, c4);			
+			cont_asm++;
 		}
 
 		else if (strcmp (c1, "LT") == 0){
 			lista_add_asm("slt", c2, c3, c4);
+			cont_asm++;
 		}
 
 		else if (strcmp (c1, "IFF") == 0){ //if falso (if igual a zero faz o desvio)
+
 			lista_add_asm("beq", c2, "$zero", c3);
+			cont_asm++;
 		}
 
 		else if (strcmp (c1, "PARAM") == 0){
@@ -73,16 +77,19 @@ void gera_cod_Assembly (){
 
 			if (strcmp (c2, "output") == 0){
 				lista_add_asm ("OUTPUT", pop(&params), "", "");
+				cont_asm++;
 			}
 
 			else if (strcmp (c2, "input") == 0){
 				lista_add_asm ("INPUT", "$rf", "", "");
+				cont_asm++;
 			}
 
 			else { //chamada de uma função normal
 				lista_add_asm ("sw", "$sp", "$fp", "0");
 				lista_add_asm ("addi", "$sp", "$fp", "0");
 				lista_add_asm ("addi", "$sp", "$sp", "1");
+				cont_asm = cont_asm + 3;
 
 				int quant_param = atoi (c3);
 				int i;
@@ -95,11 +102,15 @@ void gera_cod_Assembly (){
 					sprintf(buffer_1, "%d", i);
 
 					lista_add_asm("sw", "$fp", pop(&params), buffer_1);
+					cont_asm++;
 				}
 
-				lista_add_asm("jal", c2, "", "");
+				sprintf(buffer_1, "%d", retorna_label_linha_asm (c2));
+
+				lista_add_asm("jal", buffer_1, "", "");
 				lista_add_asm ("addi", "$fp", "$sp", "0");
 				lista_add_asm ("lw", "$fp", "$fp", "0");
+				cont_asm = cont_asm + 3;
 
 				free (buffer_1);
 			}
@@ -107,24 +118,30 @@ void gera_cod_Assembly (){
 
 		else if (strcmp (c1, "ASSIGN") == 0){
 			lista_add_asm ("addi", c3, c2, "0"); //c3 soma com 0 e guarda em c2
+			cont_asm++;
 		}
 
-		else if (strcmp (c1, "LABEL") == 0){
-			add_label_lista(i, c2); //salva o num da linha e o nome da label
+		else if (strcmp (c1, "LABEL") == 0 || strcmp (c1, "LAB") == 0){
+			add_label_lista(cont_asm, c2); //salva o num da linha e o nome da label
 		}
 
 		else if (strcmp (c1, "GOTO") == 0){
+
 			lista_add_asm ("jump", c2, "", "");
+			cont_asm++;
 		}
 
 		else if (strcmp (c1, "FUN") == 0){
 
-			add_label_lista(i, c3); //ta estranho
+			add_label_lista(cont_asm, c3);
 
 			escopo_atual = strdup(c3); //salvando o nome do escopo atual
 
 			if (strcmp(c3, "main") == 0 || strcmp(c3, "global") == 0){
 				vars_cont = 0; //zerando as variaveis do escopo anterior	
+				if (strcmp(c3, "main") == 0){
+					linha_da_main = cont_asm; //salvando a linha da main para inserer o jump no comeco
+				}
 			}
 			else {
 				vars_cont = 2;
@@ -134,6 +151,7 @@ void gera_cod_Assembly (){
 			if(strcmp (c3, "main") != 0){ //para funções que nao sejam a main
 				lista_add_asm("sw", "$fp", "$ra", "1");
 				lista_add_asm("addi", "$sp", "$sp", "1");
+				cont_asm = cont_asm + 2;
 			}
 		}
 
@@ -144,6 +162,7 @@ void gera_cod_Assembly (){
 			if(strcmp (c2, "main") != 0){ //para funções que nao sejam a main
 				lista_add_asm("lw", "$fp", "$ra", "1");
 				lista_add_asm("jr", "$ra", "$zero", "$zero");
+				cont_asm = cont_asm + 2;
 			}
 		}
 
@@ -159,9 +178,11 @@ void gera_cod_Assembly (){
 
 					if (strcmp (c3, "global") != 0){
 						lista_add_asm ("addi", "$sp", "$sp", "1");
+						cont_asm++;
 					}
 					else {
 						lista_add_asm ("addi", "$zero", "$sp", "1");
+						cont_asm++;
 					}
 				}
 				else { //eh vetor
@@ -176,6 +197,7 @@ void gera_cod_Assembly (){
 
 						lista_add_asm("addi","$zero","$aux", aux_vars_cont_um);
 						lista_add_asm("sw","$zero","$aux", aux_vars_cont);
+						cont_asm = cont_asm + 2;
 					}
 					else{
 
@@ -185,9 +207,8 @@ void gera_cod_Assembly (){
 							sprintf(aux_vars_cont, "%d", vars_cont);
 							lista_add_asm("addi","$fp","$aux", aux_vars_cont_um);
 							lista_add_asm("addi","$fp","$aux", aux_vars_cont);
+							cont_asm = cont_asm + 2;
 						}
-
-						printf("PRINTEI O VARS_CONT: %d\n", vars_cont);
 
 						tam_vet = tam_vet + 1;
 
@@ -196,6 +217,7 @@ void gera_cod_Assembly (){
 						sprintf(aux_tam_vet, "%d", tam_vet);
 
 						lista_add_asm("addi","$sp","$sp", aux_tam_vet);
+						cont_asm++;
 					}
 				}
 			}
@@ -209,6 +231,7 @@ void gera_cod_Assembly (){
 
 					if (strcmp (c4, "global") != 0){
 						lista_add_asm ("addi", "$sp", "$sp", "1");
+						cont_asm++;
 					}
 				}
 				else { //argumento eh vetor
@@ -218,7 +241,7 @@ void gera_cod_Assembly (){
 					vars_cont++;
 
 					lista_add_asm ("addi", "$sp", "$sp", "1");
-
+					cont_asm++;
 				}
 			}
 		}
@@ -236,27 +259,59 @@ void gera_cod_Assembly (){
 					
 					if (strcmp(escopo_atual, "global") == 0){ //alocação global
 						lista_add_asm ("lw", "$zero", c2, varLocation);
+						cont_asm++;
 					}
 					else{
 						lista_add_asm("lw", "$fp", c2, varLocation);
+						cont_asm++;
 					}
 				}
-				else{ //fazer direto, numero direto sem estar num reg 
-
+				else{ //carregando um numero direto num reg
+					lista_add_asm("li", c2, c3, "");
+					cont_asm++;
 				}
-
 			}
 			else{ //load com todas as quadruplas ou seja, vetor
 
+				sprintf(varLocation, "%d", retorna_var_posicao(c3, escopo_atual));
+
+				lista_add_asm("lw", varLocation, c2, c4);
+				cont_asm++;
 			}
 		}
+
+		else if (strcmp (c1, "STORE") == 0){
+
+			if (strcmp (c4, " ") == 0){ // store normal
+
+				sprintf(varLocation, "%d", retorna_var_posicao(c2, escopo_atual));
+
+				if (strcmp(escopo_atual, "global") == 0){
+					lista_add_asm("sw", "$zero", c3, varLocation);				
+					cont_asm++;
+				}
+				else{
+					lista_add_asm("sw", "$fp", c3, varLocation);				
+					cont_asm++;
+				}
+			}
+			else { //store de vetor
+				sprintf(varLocation, "%d", retorna_var_posicao(c2, escopo_atual));
+				lista_add_asm("sw", varLocation, c3, c4);				
+				cont_asm++;
+			}
+		}
+
 		
 	} //final do for que percorre todas as quadruplas
 
-
+	fix_beqs();
+	fix_jumps();
+	insere_jump_main (max_cont);
 
 	printa_lista_asm();
 	//printa_lista_labels ();
+	//printf("VALOR DE CONT_ASM: %d\n", cont_asm);
 
 
 	free (aux_vars_cont);

@@ -464,6 +464,7 @@ void printa_lista (){
 
 
 void printa_lista_asm (){
+	int cont = 0;
 
 	t_quadrupla * no_atual = cabeca_assembly;
 
@@ -471,7 +472,8 @@ void printa_lista_asm (){
 		t_quadrupla * temp = no_atual;
 		no_atual = no_atual->next;
 
-		printf("%s %s %s %s\n", temp->nome, temp->campo_1, temp->campo_2, temp->campo_3);
+		printf("%d:  %s %s %s %s\n", cont, temp->nome, temp->campo_1, temp->campo_2, temp->campo_3);
+		cont++;
 
 		/*printf ("nome: %s\n", temp->nome);
 		printf ("campo_1: %s\n", temp->campo_1);
@@ -669,6 +671,21 @@ void libera_reg (int libera){
 	reg[libera] = 0;
 }
 
+int incrementa_reg_reverse (int num) {
+
+	int i;
+
+	for (i = num; i >= 0; i--){
+
+		if (reg[i] == 0){ //pisicao livre, pode inserir aqui
+			reg[i] = 1; //agora tem gente
+			break;
+		}
+	}
+
+	return i;
+}
+
 
 
 //============================== lista labels ==============================
@@ -730,9 +747,212 @@ void printa_lista_labels (){
 		no_atual = no_atual->next;
 
 		printf("NOME: %s\n NUM_LINHA: %d\n\n", temp->nome, temp->num_linha);
+	}
+}
 
+int retorna_label_linha_asm (char label []){
+	t_label * no_atual = cabeca_label;
+	int label_posicao = 0;
+
+	while (no_atual != NULL){
+		t_label * temp = no_atual;
+
+		if (strcmp(label, no_atual->nome) == 0){
+			label_posicao = no_atual->num_linha;
+			break;
+		}
+
+		no_atual = no_atual->next;
+	}
+	return label_posicao;
+}
+
+void fix_beqs (){
+	t_quadrupla * no_atual = cabeca_assembly;
+
+	char * buffer_1;
+
+	buffer_1 = malloc (sizeof (char) * 15);
+
+	while (no_atual){
+
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+
+		if (strcmp (temp->nome, "beq") == 0){
+			sprintf(buffer_1, "%d", retorna_label_linha_asm(temp->campo_3));
+			temp->campo_3 = strdup (buffer_1);
+		}
+	}
+	free (buffer_1);
+}
+
+void fix_jumps () {
+	t_quadrupla * no_atual = cabeca_assembly;
+
+	char * buffer_1;
+
+	buffer_1 = malloc (sizeof (char) * 15);
+
+	while (no_atual){
+
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+
+		if (strcmp (temp->nome, "jump") == 0){
+			sprintf(buffer_1, "%d", retorna_label_linha_asm(temp->campo_1));
+			temp->campo_1 = strdup (buffer_1);
+		}
+	}
+	free (buffer_1);	
+}
+
+
+t_quadrupla * cabeca_lista_aux = NULL;
+
+void lista_add_aux (char nome[], char campo_1[], char campo_2[], char campo_3[]){
+
+	if (cabeca_lista_aux == NULL) {
+		cabeca_lista_aux = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+		cabeca_lista_aux->nome = strdup(nome);
+		cabeca_lista_aux->campo_1 = strdup(campo_1);
+		cabeca_lista_aux->campo_2 = strdup(campo_2);
+		cabeca_lista_aux->campo_3 = strdup(campo_3);
+		cabeca_lista_aux->next = NULL;
+
+		/*printf("%s\n", cabeca_lista->nome);
+		printf("%s\n", cabeca_lista->campo_1);
+		printf("%s\n", cabeca_lista->campo_2);
+		printf("%s\n", cabeca_lista->campo_3);*/
+		return;
 	}
 
+
+	t_quadrupla * no_atual = cabeca_lista_aux; 
+
+	while(no_atual->next) {
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+	no_atual->next->nome = strdup(nome);
+	no_atual->next->campo_1 = strdup(campo_1);
+	no_atual->next->campo_2 = strdup(campo_2);
+	no_atual->next->campo_3 = strdup(campo_3);
+	no_atual->next->next = NULL;
+
+}
+
+void lista_free_aux() {
+	t_quadrupla * no_atual = cabeca_lista_aux;
+	while(no_atual) {
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->campo_1);
+		free(temp->campo_2);
+		free(temp->campo_3);
+		free(temp->nome);
+		free(temp);
+	}
+	no_atual = NULL;
+	cabeca_lista_aux = NULL;
+}
+
+
+void retorna_posicao_aux (int posicao, char** c1, char** c2, char** c3, char** c4){
+
+	t_quadrupla * no_atual = cabeca_lista_aux;
+	t_quadrupla * achei;
+
+	int cont = 0;
+
+	while (no_atual != NULL){ //para achar a quadrupla solicitada
+
+		t_quadrupla * temp = no_atual;
+
+		if (cont == posicao){
+			achei = no_atual;
+			break;
+		}
+
+		no_atual = no_atual->next;
+		cont++;
+	}
+
+	*c1 = achei->nome;
+	*c2 = achei->campo_1;
+	*c3 = achei->campo_2;
+	*c4 = achei->campo_3;
+}
+
+void retorna_posicao_asm (int posicao, char** c1, char** c2, char** c3, char** c4){
+	t_quadrupla * no_atual = cabeca_assembly;
+	t_quadrupla * achei;
+
+	int cont = 0;
+
+	while (no_atual != NULL){ //para achar a quadrupla solicitada
+
+		t_quadrupla * temp = no_atual;
+
+		if (cont == posicao){
+			achei = no_atual;
+			break;
+		}
+
+		no_atual = no_atual->next;
+		cont++;
+	}
+
+	*c1 = achei->nome;
+	*c2 = achei->campo_1;
+	*c3 = achei->campo_2;
+	*c4 = achei->campo_3;
+}
+
+void insere_jump_main (int max_lista){
+
+	// primeiro passo: salvar a lista atual na auxiliar
+
+	int i;
+	char *c1;
+	char *c2;
+	char *c3;
+	char *c4;
+
+	char * buffer_1;
+
+	buffer_1 = malloc (sizeof (char) * 15);
+
+
+	for (i = 0; i <= max_lista; i++){
+
+		retorna_posicao_asm (i, &c1, &c2, &c3, &c4);
+		lista_add_aux (c1, c2, c3, c4);
+	} //agora a lista ta salva
+
+	lista_free_asm();
+
+	//depois adiciona o primeiro jump da main
+
+
+	sprintf(buffer_1, "%d", retorna_label_linha_asm("main"));
+
+	lista_add_asm("jump", buffer_1, "", "");
+
+	//ai com o primeiro elemento alocado, pega a lista auxiliar e colocar denovo na normal
+	//fazendo lista_asm [cont + 1] = lista_aux [cont];
+
+	for (i = 0; i <= max_lista; i++){
+		retorna_posicao_aux(i, &c1, &c2, &c3, &c4);
+		lista_add_asm(c1, c2, c3, c4);
+	}
+
+
+
+	free (buffer_1);
 }
 
 
