@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdint.h>
 
 #define MAX_TAM_TOKEN 100
 
@@ -153,6 +154,7 @@ void inicializaPilha(Pilha *P);
 
 void gera_cod_Assembly ();
 
+void gera_binario ();
 
 
 //============================== OTIMIZANDO REGISTRADORES ==============================
@@ -200,3 +202,21 @@ void lista_var_free ();
 int retorna_var_posicao (char nome_var [], char escopo []);
 
 int testa_numero(char s []);
+
+//============================== BINARIO ==============================
+
+void lista_add_binario (char nome[], char campo_1[], char campo_2[], char campo_3[], char campo_4[]);
+
+void lista_free_binario();
+
+void printa_lista_binario ();
+
+int retorna_max_quadrupla_asm ();
+
+uint32_t int_to_binary(uint32_t k);
+
+int num_register (char reg []);
+
+char * charBin (char palavra [], int tam_esperado);
+
+char * intBin (char reg [], int tam_esperado);

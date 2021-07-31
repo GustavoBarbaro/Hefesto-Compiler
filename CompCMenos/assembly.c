@@ -63,6 +63,26 @@ void gera_cod_Assembly (){
 			cont_asm++;
 		}
 
+		else if (strcmp (c1, "EQUAL") == 0){
+			lista_add_asm("xnor", c2, c3, c4);
+		}
+
+		else if (strcmp (c1, "GT") == 0){
+			lista_add_asm("sub", c2, c3, c4);
+		}
+
+		else if (strcmp (c1, "NEQ") == 0){
+			lista_add_asm("xor", c2, c3, c4);
+		}
+
+		else if (strcmp (c1, "LEQ") == 0){
+			lista_add_asm("sub", c2, c3, c4);
+		}
+
+		else if (strcmp (c1, "GEQ") == 0){
+			lista_add_asm("sub", c2, c3, c4);
+		}
+
 		else if (strcmp (c1, "IFF") == 0){ //if falso (if igual a zero faz o desvio)
 
 			lista_add_asm("beq", c2, "$zero", c3);

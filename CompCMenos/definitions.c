@@ -635,7 +635,7 @@ char* pop(Pilha *P){
 
 //============================== OTIMIZANDO REGISTRADORES ==============================
 
-#define max_reg 27
+#define max_reg 25
 
 int reg[max_reg] = {0};
 
@@ -1042,4 +1042,338 @@ int testa_numero(char s []){
 	return result;
 	//if (result == 1){printf("EH NUMERO\n");}
 	//if (result == 0){printf("NAO EH NUMERO\n");}
+}
+
+
+
+//============================== BINARIO ==============================
+
+typedef struct quintupla {
+	char * nome;
+	char * campo_1;
+	char * campo_2;
+	char * campo_3;
+	char * campo_4;
+
+	struct quintupla * next;
+} t_bin;
+
+
+
+t_bin *cabeca_binario = NULL;
+
+
+void lista_add_binario (char nome[], char campo_1[], char campo_2[], char campo_3[], char campo_4[]){
+
+	if (cabeca_binario == NULL) {
+		cabeca_binario = (struct quintupla *) malloc (sizeof (struct quintupla));
+
+		cabeca_binario->nome = strdup(nome);
+		cabeca_binario->campo_1 = strdup(campo_1);
+		cabeca_binario->campo_2 = strdup(campo_2);
+		cabeca_binario->campo_3 = strdup(campo_3);
+		cabeca_binario->campo_4 = strdup(campo_4);
+		cabeca_binario->next = NULL;
+		return;
+	}
+
+	t_bin * no_atual = cabeca_binario; 
+
+	while(no_atual->next) {
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct quintupla *) malloc (sizeof (struct quintupla));
+
+	no_atual->next->nome = strdup(nome);
+	no_atual->next->campo_1 = strdup(campo_1);
+	no_atual->next->campo_2 = strdup(campo_2);
+	no_atual->next->campo_3 = strdup(campo_3);
+	no_atual->next->campo_4 = strdup(campo_4);
+	no_atual->next->next = NULL;
+
+}
+
+
+void lista_free_binario() {
+	t_bin * no_atual = cabeca_binario;
+	while(no_atual) {
+		t_bin * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->campo_1);
+		free(temp->campo_2);
+		free(temp->campo_3);
+		free(temp->campo_4);
+		free(temp->nome);
+		free(temp);
+	}
+	no_atual = NULL;
+	cabeca_lista = NULL;
+}
+
+void printa_lista_binario (){
+	int cont = 0;
+
+	t_bin * no_atual = cabeca_binario;
+
+	while (no_atual){
+		t_bin * temp = no_atual;
+		no_atual = no_atual->next;
+
+		printf("%d:  %s%s%s%s%s\n", cont, temp->nome, temp->campo_1, temp->campo_2, temp->campo_3, temp->campo_4);
+		cont++;
+	}
+}
+
+
+int retorna_max_quadrupla_asm (){
+	int max_cont = 0;
+
+	t_quadrupla * no_atual = cabeca_assembly;
+
+	while (no_atual != NULL){ //para saber quantas quadruplas foram montadas
+
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+		max_cont++;
+	}
+
+	return max_cont - 1;
+}
+
+
+uint32_t int_to_binary(uint32_t k) {
+    if (k == 0) { return 0; }
+    if (k == 1) { return 1; }
+    return (k % 2) + 10 * int_to_binary(k / 2);
+}
+
+
+typedef enum registers {$zero, $t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10, $t11, $t12,
+						$t13, $t14, $t15, $t16, $t17, $t18, $t19, $t20, $t21, $t22, $t23, $t24, 
+						$t25, $aux, $rf, $fp, $sp,$ra} regs;
+
+
+int num_register (char reg []){
+
+	regs reg_atual;
+
+	if (strcmp (reg, "$zero") == 0){
+		reg_atual = $zero;
+	}
+
+	else if (strcmp (reg, "$t0") == 0){
+		reg_atual = $t0;
+	}
+
+	else if (strcmp (reg, "$t1") == 0){
+		reg_atual = $t1;
+	}
+
+	else if (strcmp (reg, "$t2") == 0){
+		reg_atual = $t2;
+	}
+
+	else if (strcmp (reg, "$t3") == 0){
+		reg_atual = $t3;
+	}
+
+	else if (strcmp (reg, "$t4") == 0){
+		reg_atual = $t4;
+	}
+
+	else if (strcmp (reg, "$t5") == 0){
+		reg_atual = $t5;
+	}
+
+	else if (strcmp (reg, "$t6") == 0){
+		reg_atual = $t6;
+	}
+
+	else if (strcmp (reg, "$t7") == 0){
+		reg_atual = $t7;
+	}
+
+	else if (strcmp (reg, "$t8") == 0){
+		reg_atual = $t8;
+	}
+
+	else if (strcmp (reg, "$t9") == 0){
+		reg_atual = $t9;
+	}
+
+	else if (strcmp (reg, "$t10") == 0){
+		reg_atual = $t10;
+	}
+
+	else if (strcmp (reg, "$t11") == 0){
+		reg_atual = $t11;
+	}
+
+	else if (strcmp (reg, "$t12") == 0){
+		reg_atual = $t12;
+	}
+
+	else if (strcmp (reg, "$t13") == 0){
+		reg_atual = $t13;
+	}
+
+	else if (strcmp (reg, "$t14") == 0){
+		reg_atual = $t14;
+	}
+
+	else if (strcmp (reg, "$t15") == 0){
+		reg_atual = $t15;
+	}
+
+	else if (strcmp (reg, "$t16") == 0){
+		reg_atual = $t16;
+	}
+
+	else if (strcmp (reg, "$t17") == 0){
+		reg_atual = $t17;
+	}
+
+	else if (strcmp (reg, "$t18") == 0){
+		reg_atual = $t18;
+	}
+
+	else if (strcmp (reg, "$t19") == 0){
+		reg_atual = $t19;
+	}
+
+	else if (strcmp (reg, "$t20") == 0){
+		reg_atual = $t20;
+	}
+
+	else if (strcmp (reg, "$t21") == 0){
+		reg_atual = $t21;
+	}
+
+	else if (strcmp (reg, "$t22") == 0){
+		reg_atual = $t22;
+	}
+
+	else if (strcmp (reg, "$t23") == 0){
+		reg_atual = $t23;
+	}
+
+	else if (strcmp (reg, "$t24") == 0){
+		reg_atual = $t24;
+	}
+
+	else if (strcmp (reg, "$t25") == 0){
+		reg_atual = $t25;
+	}
+
+	else if (strcmp (reg, "$aux") == 0){
+		reg_atual = $aux;
+	}
+
+	else if (strcmp (reg, "$rf") == 0){
+		reg_atual = $rf;
+	}
+
+	else if (strcmp (reg, "$fp") == 0){
+		reg_atual = $fp;
+	}
+
+	else if (strcmp (reg, "$sp") == 0){
+		reg_atual = $sp;
+	}
+
+	else if (strcmp (reg, "$ra") == 0){
+		reg_atual = $ra;
+	}
+	return reg_atual;
+}
+
+
+char * charBin (char reg [], int tam_esperado) {
+
+	char * resp;
+	char * bin_string;
+	char * zeros;
+	char * retorno;
+	int aux, num;
+	int i;
+	int diferenca = 0;
+
+	bin_string = malloc (sizeof (char) * 32);
+
+	aux = num_register(reg);
+	num = int_to_binary(aux); //num agora contem o num em binario do registrador
+
+	sprintf(bin_string, "%d", num);
+
+	resp = strdup(bin_string);
+
+
+	if (strlen(bin_string) <= tam_esperado){
+		
+
+		diferenca = tam_esperado - strlen(resp);
+
+		zeros = malloc (sizeof (char) * tam_esperado);
+
+		for (i = 0; i < diferenca; i++){
+			zeros[i] = '0';
+		}
+
+		zeros[diferenca] = '\0';
+
+		strcat(zeros, resp);
+
+	}
+
+	retorno = strdup(zeros);
+
+	free (bin_string);
+	free(zeros);
+	return retorno;
+}
+
+char * intBin (char numero [], int tam_esperado){
+	char * resp;
+	char * bin_string;
+	char * zeros;
+	char * retorno;
+	int aux, num;
+	int i;
+	int diferenca = 0;
+	int num_tipo_inteiro = 0;
+
+	bin_string = malloc (sizeof (char) * 32);
+
+	num_tipo_inteiro = atoi (numero);
+
+	num = int_to_binary(num_tipo_inteiro); //num agora contem o num em binario
+
+	sprintf(bin_string, "%d", num);
+
+	resp = strdup(bin_string);
+
+
+	if (strlen(bin_string) <= tam_esperado){
+		
+
+		diferenca = tam_esperado - strlen(resp);
+
+		zeros = malloc (sizeof (char) * tam_esperado);
+
+		for (i = 0; i < diferenca; i++){
+			zeros[i] = '0';
+		}
+
+		zeros[diferenca] = '\0';
+
+		strcat(zeros, resp);
+
+	}
+
+	retorno = strdup(zeros);
+
+	free (bin_string);
+	free(zeros);
+	return retorno;
 }
