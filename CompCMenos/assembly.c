@@ -80,7 +80,9 @@ void gera_cod_Assembly (){
 		}
 
 		else if (strcmp (c1, "GEQ") == 0){
-			lista_add_asm("sub", c2, c3, c4);
+			lista_add_asm("slt", c2, c3, c4);
+			lista_add_asm("addi", "$zero", "$aux", "1");
+			lista_add_asm("sub", "$aux", c4, c4);
 		}
 
 		else if (strcmp (c1, "IFF") == 0){ //if falso (if igual a zero faz o desvio)
