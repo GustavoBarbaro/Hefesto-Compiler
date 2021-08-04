@@ -481,7 +481,6 @@ void printa_lista_asm (){
 		printf ("campo_3: %s\n", temp->campo_3);
 		printf ("\n\n");*/
 	}
-
 }
 
 

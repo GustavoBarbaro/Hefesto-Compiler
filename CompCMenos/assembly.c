@@ -111,6 +111,8 @@ void gera_cod_Assembly (){
 				lista_add_asm ("sw", "$sp", "$fp", "0");
 				lista_add_asm ("addi", "$sp", "$fp", "0");
 				lista_add_asm ("addi", "$sp", "$sp", "1");
+
+
 				cont_asm = cont_asm + 3;
 
 				int quant_param = atoi (c3);
@@ -162,7 +164,12 @@ void gera_cod_Assembly (){
 			if (strcmp(c3, "main") == 0 || strcmp(c3, "global") == 0){
 				vars_cont = 0; //zerando as variaveis do escopo anterior	
 				if (strcmp(c3, "main") == 0){
+					lista_add_asm ("addi", "$zero", "$fp", "128"); //metade da minha memoria de 256
+					lista_add_asm ("addi", "$fp", "$sp", "0");
+					//o espaco acima disso esta reservado para global
+
 					linha_da_main = cont_asm; //salvando a linha da main para inserer o jump no comeco
+					cont_asm = cont_asm + 2;
 				}
 			}
 			else {
@@ -322,6 +329,11 @@ void gera_cod_Assembly (){
 				lista_add_asm("sw", varLocation, c3, c4);				
 				cont_asm++;
 			}
+		}
+
+		else if (strcmp (c1, "RET") == 0){
+			lista_add_asm ("addi", c2, "$ra", "0"); //c3 soma com 0 e guarda em c2
+			cont_asm++;
 		}
 
 		

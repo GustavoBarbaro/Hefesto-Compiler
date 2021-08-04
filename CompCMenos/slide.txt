@@ -21,4 +21,5 @@ CompCMenos/
 ├── cgen.c <-- Gerador de código intermediário 
 ├── main.c <-- Arquivo principal do compilador
 ├── run.sh   <-- Script para rodar
-
+├── assembly.c <--  Gerador das instruções em Assembly
+├── binario.c <-- Gerado do Binário
