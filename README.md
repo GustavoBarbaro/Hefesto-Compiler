@@ -1,3 +1,6 @@
+<img src="https://user-images.githubusercontent.com/48565991/131067127-85ff459f-4d4e-468b-96f4-bbe610f11924.png" data-canonical-src="https://user-images.githubusercontent.com/48565991/131067127-85ff459f-4d4e-468b-96f4-bbe610f11924.png" width="600" height="450" />
+
+
 # About
 
 This project is a C minus compiler that can compile C minus codes and generate the binary executable to a processor MIPS based using a RISC instruction set.
