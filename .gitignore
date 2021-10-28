@@ -1,5 +1,5 @@
-exec
-lex.yy.c
-parse.tab.c
-parse.tab.h
-
+CompCMenos/exec
+CompCMenos/lex.yy.c
+CompCMenos/parse.tab.c
+CompCMenos/parse.tab.h
+CompCMenos/run.sh
