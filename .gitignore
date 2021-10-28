@@ -3,3 +3,4 @@ CompCMenos/lex.yy.c
 CompCMenos/parse.tab.c
 CompCMenos/parse.tab.h
 CompCMenos/run.sh
+CompCMenos/winrun.sh
