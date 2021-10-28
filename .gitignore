@@ -2,4 +2,4 @@ exec
 lex.yy.c
 parse.tab.c
 parse.tab.h
-run.sh
+CompCMenos/run.sh
