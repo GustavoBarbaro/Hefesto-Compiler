@@ -103,8 +103,9 @@ void gera_cod_Assembly (){
 			}
 
 			else if (strcmp (c2, "input") == 0){
-				lista_add_asm ("INPUT", "$rf", "", "");
-				cont_asm++;
+				lista_add_asm ("delay", "", "", "");
+				lista_add_asm ("INPUT", c4, "", "");
+				cont_asm = cont_asm + 2;
 			}
 
 			else { //chamada de uma função normal

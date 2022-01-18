@@ -114,11 +114,14 @@ void gera_binario(){
 		else if (strcmp (c1, "jr") == 0){
 			lista_add_binario ("001010", charBin(c2, 26), "","","");
 		}
+		else if (strcmp (c1, "delay") == 0){
+			lista_add_binario ("001101", "11111", "000000000000000000000", "",""); //WAIT
+		}
 		else if (strcmp (c1, "INPUT") == 0){
-			lista_add_binario ("001011", charBin (c2,16), "1111111111", "","");
+			lista_add_binario ("001011", "00000", charBin (c2,5), "1111111111111111","");//INPUT
 		}
 		else if (strcmp (c1, "OUTPUT") == 0){
-			lista_add_binario ("001100", charBin (c2,16), "1111111111", "","");
+			lista_add_binario ("001100", charBin (c2,5), "111111111111111111111", "","");
 		}
 	}//fim do for
 

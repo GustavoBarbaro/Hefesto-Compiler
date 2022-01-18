@@ -1119,7 +1119,8 @@ void printa_lista_binario (){
 		t_bin * temp = no_atual;
 		no_atual = no_atual->next;
 
-		printf("%d:  %s%s%s%s%s\n", cont, temp->nome, temp->campo_1, temp->campo_2, temp->campo_3, temp->campo_4);
+		printf("%s%s%s%s%s\n", temp->nome, temp->campo_1, temp->campo_2, temp->campo_3, temp->campo_4);
+		//printf("%d:  %s%s%s%s%s\n", cont, temp->nome, temp->campo_1, temp->campo_2, temp->campo_3, temp->campo_4);
 		cont++;
 	}
 }
