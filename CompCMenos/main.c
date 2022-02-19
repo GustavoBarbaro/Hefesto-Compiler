@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "definitions.h"
+#include "asm_definitions.h"
 #define MAX_LINHA 100
 //aloca as variaveis globais
 int numlinha = 0;
-FILE * arq_cod_fonte;
-bool Erro;
+// FILE * arq_cod_fonte;
+// bool Erro;
 int main(){
-
+/*
 	arq_cod_fonte = fopen("sample.c","r");
 	if(arq_cod_fonte == NULL){
 		printf("Falha na leitura do código fonte\n");
@@ -37,23 +37,24 @@ int main(){
 		geraCod(arvoreSintatica);
 	printa_lista();
 
-
+*/
 	printf("\n\n==================== Código Assembly ====================\n\n");
 
-	gera_cod_Assembly();
+	//gera_cod_Assembly();
+	fast_asm_converter();
 
 
 	printf("\n\n==================== Código Binario ====================\n\n");
 
 	gera_binario ();
 
-	lista_free();
+	//lista_free();
 	lista_free_asm();
-	lista_label_free ();
-	lista_var_free ();
-	lista_free_aux ();
+	//lista_label_free ();
+	//lista_var_free ();
+	//lista_free_aux ();
 	lista_free_binario();
-	fclose(arq_cod_fonte);
+	//fclose(arq_cod_fonte);
 	return 0;
 }
 

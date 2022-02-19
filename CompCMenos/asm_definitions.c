@@ -1,0 +1,1054 @@
+#include "asm_definitions.h"
+// COLOCANDO AGORA AS FUNCOES DA LISTA ENCADEADA PRA SALVAR AS QUADRUPLAS
+
+
+typedef struct quadrupla {
+	char * nome;
+	char * campo_1;
+	char * campo_2;
+	char * campo_3;
+
+	struct quadrupla * next;
+} t_quadrupla;
+
+t_quadrupla *cabeca_lista = NULL; //head, começo da lista (endereço) (quadruplas - cgen)
+
+t_quadrupla *cabeca_assembly = NULL; //cebeça da lista de instruções assembly
+
+
+void lista_add (char nome[], char campo_1[], char campo_2[], char campo_3[]){
+
+	if (cabeca_lista == NULL) {
+		cabeca_lista = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+		cabeca_lista->nome = strdup(nome);
+		cabeca_lista->campo_1 = strdup(campo_1);
+		cabeca_lista->campo_2 = strdup(campo_2);
+		cabeca_lista->campo_3 = strdup(campo_3);
+		cabeca_lista->next = NULL;
+
+		/*printf("%s\n", cabeca_lista->nome);
+		printf("%s\n", cabeca_lista->campo_1);
+		printf("%s\n", cabeca_lista->campo_2);
+		printf("%s\n", cabeca_lista->campo_3);*/
+		return;
+	}
+
+
+	t_quadrupla * no_atual = cabeca_lista; 
+
+	while(no_atual->next) {
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+	no_atual->next->nome = strdup(nome);
+	no_atual->next->campo_1 = strdup(campo_1);
+	no_atual->next->campo_2 = strdup(campo_2);
+	no_atual->next->campo_3 = strdup(campo_3);
+	no_atual->next->next = NULL;
+
+}
+
+void lista_add_asm (char nome[], char campo_1[], char campo_2[], char campo_3[]){
+
+	if (cabeca_assembly == NULL) {
+		cabeca_assembly = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+		cabeca_assembly->nome = strdup(nome);
+		cabeca_assembly->campo_1 = strdup(campo_1);
+		cabeca_assembly->campo_2 = strdup(campo_2);
+		cabeca_assembly->campo_3 = strdup(campo_3);
+		cabeca_assembly->next = NULL;
+
+		/*printf("%s\n", cabeca_lista->nome);
+		printf("%s\n", cabeca_lista->campo_1);
+		printf("%s\n", cabeca_lista->campo_2);
+		printf("%s\n", cabeca_lista->campo_3);*/
+		return;
+	}
+
+
+	t_quadrupla * no_atual = cabeca_assembly; 
+
+	while(no_atual->next) {
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+	no_atual->next->nome = strdup(nome);
+	no_atual->next->campo_1 = strdup(campo_1);
+	no_atual->next->campo_2 = strdup(campo_2);
+	no_atual->next->campo_3 = strdup(campo_3);
+	no_atual->next->next = NULL;
+
+}
+
+
+void lista_free() {
+	t_quadrupla * no_atual = cabeca_lista;
+	while(no_atual) {
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->campo_1);
+		free(temp->campo_2);
+		free(temp->campo_3);
+		free(temp->nome);
+		free(temp);
+	}
+	no_atual = NULL;
+	cabeca_lista = NULL;
+}
+
+void lista_free_asm() {
+	t_quadrupla * no_atual = cabeca_assembly;
+	while(no_atual) {
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->campo_1);
+		free(temp->campo_2);
+		free(temp->campo_3);
+		free(temp->nome);
+		free(temp);
+	}
+	no_atual = NULL;
+	cabeca_assembly = NULL;
+}
+
+void printa_lista (){
+
+	t_quadrupla * no_atual = cabeca_lista;
+	int cont = 0;
+
+	while (no_atual){
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+
+		printf("%d: (%s, %s, %s, %s)\n", cont++, temp->nome, temp->campo_1, temp->campo_2, temp->campo_3);
+
+		/*printf ("nome: %s\n", temp->nome);
+		printf ("campo_1: %s\n", temp->campo_1);
+		printf ("campo_2: %s\n", temp->campo_2);
+		printf ("campo_3: %s\n", temp->campo_3);
+		printf ("\n\n");*/
+	}
+
+}
+
+
+void printa_lista_asm (){
+	int cont = 0;
+
+	t_quadrupla * no_atual = cabeca_assembly;
+
+	while (no_atual){
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+
+		printf("%d:  %s %s %s %s\n", cont, temp->nome, temp->campo_1, temp->campo_2, temp->campo_3);
+		cont++;
+
+		/*printf ("nome: %s\n", temp->nome);
+		printf ("campo_1: %s\n", temp->campo_1);
+		printf ("campo_2: %s\n", temp->campo_2);
+		printf ("campo_3: %s\n", temp->campo_3);
+		printf ("\n\n");*/
+	}
+}
+
+
+void retorna_posicao (int posicao, char** c1, char** c2, char** c3, char** c4){
+
+	t_quadrupla * no_atual = cabeca_lista;
+	t_quadrupla * achei;
+
+	int cont = 0;
+
+	while (no_atual != NULL){ //para achar a quadrupla solicitada
+
+		t_quadrupla * temp = no_atual;
+
+		if (cont == posicao){
+			achei = no_atual;
+			break;
+		}
+
+		no_atual = no_atual->next;
+		cont++;
+	}
+
+	*c1 = achei->nome;
+	*c2 = achei->campo_1;
+	*c3 = achei->campo_2;
+	*c4 = achei->campo_3;
+}
+
+int retorna_max_quadrupla (){
+	int max_cont = 0;
+
+	t_quadrupla * no_atual = cabeca_lista;
+
+	while (no_atual != NULL){ //para saber quantas quadruplas foram montadas
+
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+		max_cont++;
+	}
+
+	return max_cont - 1;
+}
+
+
+
+void salva_quadrupla (char textinho[], char c_1[], char c_2[], char c_3[], int var_c_1, int var_c_2, int var_c_3, int m_flag){
+
+	char * buffer_1;
+	char * buffer_2;
+	char * buffer_3;
+
+	//alocando 3 buffers temporarios
+	buffer_1 = malloc (sizeof (char) * 15);
+	buffer_2 = malloc (sizeof (char) * 15);
+	buffer_3 = malloc (sizeof (char) * 15);
+
+	//caso nao precise de conversão
+	if (var_c_1 == -1){
+		buffer_1 = strdup(c_1);
+	}
+	else{
+		sprintf(buffer_1, "%s%d", c_1, var_c_1); //convertendo int para char e ja concatenando em buffer  
+	}
+
+	//caso nao precise de conversão
+	if(var_c_2 == -1){
+		buffer_2 = strdup(c_2);
+	}
+	else{
+		sprintf(buffer_2, "%s%d", c_2, var_c_2); //convertendo int para char e ja concatenando em buffer
+	}
+
+	//caso nao precise de conversão
+	if(var_c_3 == -1){
+		buffer_3 = strdup(c_3);
+	}
+	else{
+		sprintf(buffer_3, "%s%d", c_3, var_c_3); //convertendo int para char e ja concatenando em buffer
+	}
+	
+
+	//agora esta tudo pronto para adicionar a quadrupla na lista
+	switch (m_flag){
+
+		case (0): // 0 campo sem usar da quadrupla
+			lista_add(textinho, buffer_1, buffer_2, buffer_3);
+		break;
+
+		case (1): // 1 campos sem usar da quadrupla
+			lista_add(textinho, buffer_1, buffer_2, " ");
+		break;
+
+		case (2): // 2 campos sem usar da quadrupla
+			lista_add(textinho, buffer_1, " ", " ");
+		break;
+
+		case (3): // campos sem usar da quadrupla (halt)
+			lista_add(textinho, " ", " ", " ");
+		break;
+
+		default:
+		break;
+	}
+
+
+	free (buffer_1);
+	free (buffer_2);
+	free (buffer_3);
+}
+
+
+
+
+
+//======================================= PILHA ===============================================
+
+
+
+void inicializaPilha(Pilha *P){
+	P = malloc(sizeof(Pilha*));
+	P->numelementos = 0;
+	P->topo = NULL;
+}
+
+void push(Pilha * P, char * nome){
+	TNome * NomeStr = malloc(sizeof(TNome*));
+	NomeStr->nome = strdup(nome);
+	NomeStr->abaixo = P->topo;
+	P->topo = NomeStr;
+	P->numelementos ++;
+}
+
+char* pop(Pilha *P){
+	char *nome = NULL;
+	if (P->numelementos != 0){// pilha não vazia
+		nome = strdup(P->topo->nome);
+		TNome *topoAntigo;
+		topoAntigo = P->topo;
+		P->topo = topoAntigo->abaixo;
+		P->numelementos --;
+		nome = strdup(topoAntigo->nome);
+		free(topoAntigo);
+	}
+	return nome;
+}
+
+
+
+
+
+//============================== OTIMIZANDO REGISTRADORES ==============================
+
+#define max_reg 25
+
+int reg[max_reg] = {0};
+
+
+int incrementa_reg () {
+
+	int i;
+
+	for (i = 0; i <= max_reg; i++){
+
+		if (reg[i] == 0){ //pisicao livre, pode inserir aqui
+			reg[i] = 1; //agora tem gente
+			break;
+		}
+	}
+
+	return i;
+}
+
+
+void zera_reg_FinalFunc (){
+
+	int i;
+
+	for (i = 0; i <= max_reg; i++){
+		reg[i] = 0; //liberando os registradores
+	}
+}
+
+
+void libera_reg (int libera){
+
+	reg[libera] = 0;
+}
+
+int incrementa_reg_reverse (int num) {
+
+	int i;
+
+	for (i = num; i >= 0; i--){
+
+		if (reg[i] == 0){ //pisicao livre, pode inserir aqui
+			reg[i] = 1; //agora tem gente
+			break;
+		}
+	}
+
+	return i;
+}
+
+
+
+//============================== lista labels ==============================
+
+
+typedef struct lab {
+	int num_linha;
+	char * nome;
+
+	struct lab * next;
+} t_label;
+
+
+t_label *cabeca_label = NULL; //começo da lista de labels
+
+void add_label_lista (int num_linha, char nome []){
+	if (cabeca_label == NULL){
+		cabeca_label = (struct lab *) malloc (sizeof (struct lab));
+
+		cabeca_label->num_linha = num_linha;
+		cabeca_label->nome = strdup (nome);
+		cabeca_label->next = NULL;
+		return;
+	}
+
+	t_label * no_atual = cabeca_label;
+
+	while (no_atual->next){
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct lab *) malloc (sizeof (struct lab));
+
+	no_atual->next->num_linha = num_linha;
+	no_atual->next->nome = strdup(nome);
+	no_atual->next->next = NULL;
+}
+
+
+void lista_label_free (){
+	t_label * no_atual = cabeca_label;
+	while (no_atual){
+		t_label * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->nome);
+		free(temp);
+	}
+	no_atual = NULL;
+	cabeca_label = NULL;
+}
+
+
+void printa_lista_labels (){
+
+	t_label * no_atual = cabeca_label;
+
+	while (no_atual){
+		t_label * temp = no_atual;
+		no_atual = no_atual->next;
+
+		printf("NOME: %s\n NUM_LINHA: %d\n\n", temp->nome, temp->num_linha);
+	}
+}
+
+int retorna_label_linha_asm (char label []){
+	t_label * no_atual = cabeca_label;
+	int label_posicao = 0;
+
+	while (no_atual != NULL){
+		t_label * temp = no_atual;
+
+		if (strcmp(label, no_atual->nome) == 0){
+			label_posicao = no_atual->num_linha;
+			break;
+		}
+
+		no_atual = no_atual->next;
+	}
+	return label_posicao;
+}
+
+void fix_beqs (){
+	t_quadrupla * no_atual = cabeca_assembly;
+
+	char * buffer_1;
+
+	buffer_1 = malloc (sizeof (char) * 15);
+
+	while (no_atual){
+
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+
+		if (strcmp (temp->nome, "beq") == 0){
+			sprintf(buffer_1, "%d", retorna_label_linha_asm(temp->campo_3));
+			temp->campo_3 = strdup (buffer_1);
+		}
+	}
+	free (buffer_1);
+}
+
+void fix_jumps () {
+	t_quadrupla * no_atual = cabeca_assembly;
+
+	char * buffer_1;
+
+	buffer_1 = malloc (sizeof (char) * 15);
+
+	while (no_atual){
+
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+
+		if (strcmp (temp->nome, "jump") == 0){
+			sprintf(buffer_1, "%d", retorna_label_linha_asm(temp->campo_1));
+			temp->campo_1 = strdup (buffer_1);
+		}
+	}
+	free (buffer_1);	
+}
+
+
+t_quadrupla * cabeca_lista_aux = NULL;
+
+void lista_add_aux (char nome[], char campo_1[], char campo_2[], char campo_3[]){
+
+	if (cabeca_lista_aux == NULL) {
+		cabeca_lista_aux = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+		cabeca_lista_aux->nome = strdup(nome);
+		cabeca_lista_aux->campo_1 = strdup(campo_1);
+		cabeca_lista_aux->campo_2 = strdup(campo_2);
+		cabeca_lista_aux->campo_3 = strdup(campo_3);
+		cabeca_lista_aux->next = NULL;
+
+		/*printf("%s\n", cabeca_lista->nome);
+		printf("%s\n", cabeca_lista->campo_1);
+		printf("%s\n", cabeca_lista->campo_2);
+		printf("%s\n", cabeca_lista->campo_3);*/
+		return;
+	}
+
+
+	t_quadrupla * no_atual = cabeca_lista_aux; 
+
+	while(no_atual->next) {
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct quadrupla *) malloc (sizeof (struct quadrupla));
+
+	no_atual->next->nome = strdup(nome);
+	no_atual->next->campo_1 = strdup(campo_1);
+	no_atual->next->campo_2 = strdup(campo_2);
+	no_atual->next->campo_3 = strdup(campo_3);
+	no_atual->next->next = NULL;
+
+}
+
+void lista_free_aux() {
+	t_quadrupla * no_atual = cabeca_lista_aux;
+	while(no_atual) {
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->campo_1);
+		free(temp->campo_2);
+		free(temp->campo_3);
+		free(temp->nome);
+		free(temp);
+	}
+	no_atual = NULL;
+	cabeca_lista_aux = NULL;
+}
+
+
+void retorna_posicao_aux (int posicao, char** c1, char** c2, char** c3, char** c4){
+
+	t_quadrupla * no_atual = cabeca_lista_aux;
+	t_quadrupla * achei;
+
+	int cont = 0;
+
+	while (no_atual != NULL){ //para achar a quadrupla solicitada
+
+		t_quadrupla * temp = no_atual;
+
+		if (cont == posicao){
+			achei = no_atual;
+			break;
+		}
+
+		no_atual = no_atual->next;
+		cont++;
+	}
+
+	*c1 = achei->nome;
+	*c2 = achei->campo_1;
+	*c3 = achei->campo_2;
+	*c4 = achei->campo_3;
+}
+
+void retorna_posicao_asm (int posicao, char** c1, char** c2, char** c3, char** c4){
+	t_quadrupla * no_atual = cabeca_assembly;
+	t_quadrupla * achei;
+
+	int cont = 0;
+
+	while (no_atual != NULL){ //para achar a quadrupla solicitada
+
+		t_quadrupla * temp = no_atual;
+
+		if (cont == posicao){
+			achei = no_atual;
+			break;
+		}
+
+		no_atual = no_atual->next;
+		cont++;
+	}
+
+	*c1 = achei->nome;
+	*c2 = achei->campo_1;
+	*c3 = achei->campo_2;
+	*c4 = achei->campo_3;
+}
+
+void insere_jump_main (int max_lista){
+
+	// primeiro passo: salvar a lista atual na auxiliar
+
+	int i;
+	char *c1;
+	char *c2;
+	char *c3;
+	char *c4;
+
+	char * buffer_1;
+
+	buffer_1 = malloc (sizeof (char) * 15);
+
+
+	for (i = 0; i <= max_lista; i++){
+
+		retorna_posicao_asm (i, &c1, &c2, &c3, &c4);
+		lista_add_aux (c1, c2, c3, c4);
+	} //agora a lista ta salva
+
+	lista_free_asm();
+
+	//depois adiciona o primeiro jump da main
+
+
+	sprintf(buffer_1, "%d", retorna_label_linha_asm("main"));
+
+	lista_add_asm("jump", buffer_1, "", "");
+
+	//ai com o primeiro elemento alocado, pega a lista auxiliar e colocar denovo na normal
+	//fazendo lista_asm [cont + 1] = lista_aux [cont];
+
+	for (i = 0; i <= max_lista; i++){
+		retorna_posicao_aux(i, &c1, &c2, &c3, &c4);
+		lista_add_asm(c1, c2, c3, c4);
+	}
+
+
+
+	free (buffer_1);
+}
+
+
+//============================== lista variaveis ==============================
+
+
+typedef struct var {
+	char * nome;
+	char * escopo;
+	char * tipo;
+	int posicao;
+
+	struct var * next;
+} t_var;
+
+t_var *cabeca_var = NULL; //comeco da lista de vars
+
+void add_var_lista (char nome [], char escopo [], char tipo [], int posicao){
+	if (cabeca_var == NULL){
+		cabeca_var = (struct var *) malloc (sizeof (struct var));
+
+		cabeca_var->nome = strdup (nome);
+		cabeca_var->escopo = strdup (escopo);
+		cabeca_var->tipo = strdup (tipo);
+		cabeca_var->posicao = posicao;
+		return;
+	}
+
+	t_var * no_atual = cabeca_var;
+
+	while (no_atual->next){
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct var *) malloc (sizeof (struct var));
+
+	no_atual->next->nome = strdup (nome);
+	no_atual->next->escopo = strdup (escopo);
+	no_atual->next->tipo = strdup (tipo);
+	no_atual->next->posicao = posicao;
+	no_atual->next->next = NULL;
+}
+
+void lista_var_free (){
+	t_var * no_atual = cabeca_var;
+	while(no_atual){
+		t_var * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->nome);
+		free(temp->escopo);
+		free(temp->tipo);
+	}
+	no_atual = NULL;
+	cabeca_var = NULL;
+}
+
+int retorna_var_posicao (char nome_var [], char escopo []){
+
+	t_var * no_atual = cabeca_var;
+	int var_posicao = 0;
+
+	while (no_atual != NULL){
+		t_var * temp = no_atual;
+
+		if (strcmp(nome_var, no_atual->nome) == 0 && strcmp(escopo, no_atual->escopo) == 0){
+			var_posicao = no_atual->posicao;
+			break;
+		}
+
+		no_atual = no_atual->next;
+	}
+	return var_posicao;
+}
+
+int testa_numero(char s []){
+
+	int result = 1;
+	for(int i = 0; i<strlen(s);i++)
+	{
+		if(!isdigit(s[i]))
+		{
+			result = 0;
+			break;
+		}
+	}
+
+	return result;
+	//if (result == 1){printf("EH NUMERO\n");}
+	//if (result == 0){printf("NAO EH NUMERO\n");}
+}
+
+
+
+//============================== BINARIO ==============================
+
+typedef struct quintupla {
+	char * nome;
+	char * campo_1;
+	char * campo_2;
+	char * campo_3;
+	char * campo_4;
+
+	struct quintupla * next;
+} t_bin;
+
+
+
+t_bin *cabeca_binario = NULL;
+
+
+void lista_add_binario (char nome[], char campo_1[], char campo_2[], char campo_3[], char campo_4[]){
+
+	if (cabeca_binario == NULL) {
+		cabeca_binario = (struct quintupla *) malloc (sizeof (struct quintupla));
+
+		cabeca_binario->nome = strdup(nome);
+		cabeca_binario->campo_1 = strdup(campo_1);
+		cabeca_binario->campo_2 = strdup(campo_2);
+		cabeca_binario->campo_3 = strdup(campo_3);
+		cabeca_binario->campo_4 = strdup(campo_4);
+		cabeca_binario->next = NULL;
+		return;
+	}
+
+	t_bin * no_atual = cabeca_binario; 
+
+	while(no_atual->next) {
+		no_atual = no_atual->next;
+	}
+
+	no_atual->next = (struct quintupla *) malloc (sizeof (struct quintupla));
+
+	no_atual->next->nome = strdup(nome);
+	no_atual->next->campo_1 = strdup(campo_1);
+	no_atual->next->campo_2 = strdup(campo_2);
+	no_atual->next->campo_3 = strdup(campo_3);
+	no_atual->next->campo_4 = strdup(campo_4);
+	no_atual->next->next = NULL;
+
+}
+
+
+void lista_free_binario() {
+	t_bin * no_atual = cabeca_binario;
+	while(no_atual) {
+		t_bin * temp = no_atual;
+		no_atual = no_atual->next;
+		free(temp->campo_1);
+		free(temp->campo_2);
+		free(temp->campo_3);
+		free(temp->campo_4);
+		free(temp->nome);
+		free(temp);
+	}
+	no_atual = NULL;
+	cabeca_lista = NULL;
+}
+
+void printa_lista_binario (){
+	int cont = 0;
+
+	t_bin * no_atual = cabeca_binario;
+
+	while (no_atual){
+		t_bin * temp = no_atual;
+		no_atual = no_atual->next;
+
+		printf("%s%s%s%s%s\n", temp->nome, temp->campo_1, temp->campo_2, temp->campo_3, temp->campo_4);
+		//printf("%d:  %s%s%s%s%s\n", cont, temp->nome, temp->campo_1, temp->campo_2, temp->campo_3, temp->campo_4);
+		cont++;
+	}
+}
+
+
+int retorna_max_quadrupla_asm (){
+	int max_cont = 0;
+
+	t_quadrupla * no_atual = cabeca_assembly;
+
+	while (no_atual != NULL){ //para saber quantas quadruplas foram montadas
+
+		t_quadrupla * temp = no_atual;
+		no_atual = no_atual->next;
+		max_cont++;
+	}
+
+	return max_cont - 1;
+}
+
+
+uint32_t int_to_binary(uint32_t k) {
+    if (k == 0) { return 0; }
+    if (k == 1) { return 1; }
+    return (k % 2) + 10 * int_to_binary(k / 2);
+}
+
+
+typedef enum registers {$zero, $t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10, $t11, $t12,
+						$t13, $t14, $t15, $t16, $t17, $t18, $t19, $t20, $t21, $t22, $t23, $t24, 
+						$t25, $aux, $rf, $fp, $sp,$ra} regs;
+
+
+int num_register (char reg []){
+
+	regs reg_atual;
+
+	if (strcmp (reg, "$zero") == 0){
+		reg_atual = $zero;
+	}
+
+	else if (strcmp (reg, "$t0") == 0){
+		reg_atual = $t0;
+	}
+
+	else if (strcmp (reg, "$t1") == 0){
+		reg_atual = $t1;
+	}
+
+	else if (strcmp (reg, "$t2") == 0){
+		reg_atual = $t2;
+	}
+
+	else if (strcmp (reg, "$t3") == 0){
+		reg_atual = $t3;
+	}
+
+	else if (strcmp (reg, "$t4") == 0){
+		reg_atual = $t4;
+	}
+
+	else if (strcmp (reg, "$t5") == 0){
+		reg_atual = $t5;
+	}
+
+	else if (strcmp (reg, "$t6") == 0){
+		reg_atual = $t6;
+	}
+
+	else if (strcmp (reg, "$t7") == 0){
+		reg_atual = $t7;
+	}
+
+	else if (strcmp (reg, "$t8") == 0){
+		reg_atual = $t8;
+	}
+
+	else if (strcmp (reg, "$t9") == 0){
+		reg_atual = $t9;
+	}
+
+	else if (strcmp (reg, "$t10") == 0){
+		reg_atual = $t10;
+	}
+
+	else if (strcmp (reg, "$t11") == 0){
+		reg_atual = $t11;
+	}
+
+	else if (strcmp (reg, "$t12") == 0){
+		reg_atual = $t12;
+	}
+
+	else if (strcmp (reg, "$t13") == 0){
+		reg_atual = $t13;
+	}
+
+	else if (strcmp (reg, "$t14") == 0){
+		reg_atual = $t14;
+	}
+
+	else if (strcmp (reg, "$t15") == 0){
+		reg_atual = $t15;
+	}
+
+	else if (strcmp (reg, "$t16") == 0){
+		reg_atual = $t16;
+	}
+
+	else if (strcmp (reg, "$t17") == 0){
+		reg_atual = $t17;
+	}
+
+	else if (strcmp (reg, "$t18") == 0){
+		reg_atual = $t18;
+	}
+
+	else if (strcmp (reg, "$t19") == 0){
+		reg_atual = $t19;
+	}
+
+	else if (strcmp (reg, "$t20") == 0){
+		reg_atual = $t20;
+	}
+
+	else if (strcmp (reg, "$t21") == 0){
+		reg_atual = $t21;
+	}
+
+	else if (strcmp (reg, "$t22") == 0){
+		reg_atual = $t22;
+	}
+
+	else if (strcmp (reg, "$t23") == 0){
+		reg_atual = $t23;
+	}
+
+	else if (strcmp (reg, "$t24") == 0){
+		reg_atual = $t24;
+	}
+
+	else if (strcmp (reg, "$t25") == 0){
+		reg_atual = $t25;
+	}
+
+	else if (strcmp (reg, "$aux") == 0){
+		reg_atual = $aux;
+	}
+
+	else if (strcmp (reg, "$rf") == 0){
+		reg_atual = $rf;
+	}
+
+	else if (strcmp (reg, "$fp") == 0){
+		reg_atual = $fp;
+	}
+
+	else if (strcmp (reg, "$sp") == 0){
+		reg_atual = $sp;
+	}
+
+	else if (strcmp (reg, "$ra") == 0){
+		reg_atual = $ra;
+	}
+	return reg_atual;
+}
+
+
+char * charBin (char reg [], int tam_esperado) {
+
+	char * resp;
+	char * bin_string;
+	char * zeros;
+	char * retorno;
+	int aux, num;
+	int i;
+	int diferenca = 0;
+
+	bin_string = malloc (sizeof (char) * 32);
+
+	aux = num_register(reg);
+	num = int_to_binary(aux); //num agora contem o num em binario do registrador
+
+	sprintf(bin_string, "%d", num);
+
+	resp = strdup(bin_string);
+
+
+	if (strlen(bin_string) <= tam_esperado){
+		
+
+		diferenca = tam_esperado - strlen(resp);
+
+		zeros = malloc (sizeof (char) * tam_esperado);
+
+		for (i = 0; i < diferenca; i++){
+			zeros[i] = '0';
+		}
+
+		zeros[diferenca] = '\0';
+
+		strcat(zeros, resp);
+
+	}
+
+	retorno = strdup(zeros);
+
+	free (bin_string);
+	free(zeros);
+	return retorno;
+}
+
+char * intBin (char numero [], int tam_esperado){
+	char * resp;
+	char * bin_string;
+	char * zeros;
+	char * retorno;
+	int aux, num;
+	int i;
+	int diferenca = 0;
+	int num_tipo_inteiro = 0;
+
+	bin_string = malloc (sizeof (char) * 32);
+
+	num_tipo_inteiro = atoi (numero);
+
+	num = int_to_binary(num_tipo_inteiro); //num agora contem o num em binario
+
+	sprintf(bin_string, "%d", num);
+
+	resp = strdup(bin_string);
+
+
+	if (strlen(bin_string) <= tam_esperado){
+		
+
+		diferenca = tam_esperado - strlen(resp);
+
+		zeros = malloc (sizeof (char) * tam_esperado);
+
+		for (i = 0; i < diferenca; i++){
+			zeros[i] = '0';
+		}
+
+		zeros[diferenca] = '\0';
+
+		strcat(zeros, resp);
+
+	}
+
+	retorno = strdup(zeros);
+
+	free (bin_string);
+	free(zeros);
+	return retorno;
+}

@@ -1,4 +1,5 @@
 CompCMenos/exec
+CompCMenos/exec_asm
 CompCMenos/lex.yy.c
 CompCMenos/parse.tab.c
 CompCMenos/parse.tab.h
