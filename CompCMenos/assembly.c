@@ -342,7 +342,8 @@ void gera_cod_Assembly (){
 
 	fix_beqs();
 	fix_jumps();
-	insere_jump_main (max_cont);
+	//esse +1 eh pq eu inseri o jump na main mas ele comeu uma linha na lista de instrucoes asm
+	insere_jump_main (max_cont+1);
 
 	printa_lista_asm();
 	//printa_lista_labels ();
