@@ -4,3 +4,5 @@ CompCMenos/parse.tab.c
 CompCMenos/parse.tab.h
 CompCMenos/winrun.sh
 CompCMenos/lex.yy.o
+
+CompCMenos/exec_asm
