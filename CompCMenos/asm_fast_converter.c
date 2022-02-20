@@ -12,8 +12,8 @@ void fast_asm_converter(){
 	lista_add_asm("sw", "$zero", "$rf", "0");
 
 	//pule para a primeira linha do P1
-	lista_add_asm("li", "$r25", "300", "");
-	lista_add_asm("jumpP1", "$r25", "", "");
+	lista_add_asm("li", "$t25", "20", "");
+	lista_add_asm("jumpP1", "$t25", "", "");
 
 	// ========================================================= //
 
@@ -28,7 +28,7 @@ void fast_asm_converter(){
 	lista_add_asm("xnor", "$rf", "$ra", "$aux");
 
 	//se $aux == 0 então $rf != $ra poranto pule o else
-	lista_add_asm("beq", "$aux", "$zero", "9999");
+	lista_add_asm("beq", "$aux", "$zero", "75");
 	// ============================== bloco dentro do if ============================== //
 
 
