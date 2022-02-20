@@ -165,7 +165,7 @@ void gera_cod_Assembly (){
 			if (strcmp(c3, "main") == 0 || strcmp(c3, "global") == 0){
 				vars_cont = 0; //zerando as variaveis do escopo anterior	
 				if (strcmp(c3, "main") == 0){
-					lista_add_asm ("addi", "$zero", "$fp", "128"); //metade da minha memoria de 256
+					lista_add_asm ("addi", "$zero", "$fp", "20"); //metade da minha memoria de 256 (reduzi para apenas 20)
 					lista_add_asm ("addi", "$fp", "$sp", "0");
 					//o espaco acima disso esta reservado para global
 

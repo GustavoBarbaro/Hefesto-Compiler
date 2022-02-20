@@ -1,14 +1,9 @@
-void main ( void ){
-    int x;
-
-    x = 40;
-
-    if (x == 5){
-        x = 4;
+void main(void) { 
+    int x; 
+    x = 1;
+    while (x <= 4){
+        x = x + 1;
     }
-    else {
-        x = 20;
-    }
-
-
+    output(x);
+    
 }
