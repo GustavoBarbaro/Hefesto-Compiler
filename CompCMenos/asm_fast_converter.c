@@ -196,7 +196,7 @@ void fast_asm_converter(){
 
 	//recuperar o valor do PC do outro processo
 	lista_add_asm("lw", "$zero", "$t25", "63");
-	lista_add_asm("jumpP2", "$t25", "", "");
+	lista_add_asm("jumpP1", "$t25", "", "");
 
 	// ============================== fim do bloco do else ============================== //
 	
