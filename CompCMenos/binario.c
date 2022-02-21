@@ -112,7 +112,7 @@ void gera_binario(){
 			lista_add_binario ("001001", intBin(c2, 26), "","","");
 		}
 		else if (strcmp (c1, "jr") == 0){
-			lista_add_binario ("001010", charBin(c2, 26), "","","");
+			lista_add_binario ("001010", charBin(c2, 5), "000000000000000000000","","");
 		}
 		else if (strcmp (c1, "delay") == 0){
 			lista_add_binario ("001101", "11111", "000000000000000000000", "",""); //WAIT
@@ -122,6 +122,18 @@ void gera_binario(){
 		}
 		else if (strcmp (c1, "OUTPUT") == 0){
 			lista_add_binario ("001100", charBin (c2,5), "111111111111111111111", "","");
+		}
+		else if (strcmp (c1, "jumpP1") == 0){
+			lista_add_binario ("010000", charBin(c2, 5), "000000000000000000000", "","");
+		}
+		else if (strcmp (c1, "jumpP2") == 0){
+			lista_add_binario ("010001", charBin(c2, 5), "000000000000000000000", "","");
+		}
+		else if (strcmp (c1, "recup_PC") == 0){
+			lista_add_binario ("010010", "00000", charBin (c2,5), "0000000000000000","");
+		}
+		else if (strcmp (c1, "halt") == 0){
+			lista_add_binario ("010011", "00000000000000000000000000", "", "","");
 		}
 	}//fim do for
 
