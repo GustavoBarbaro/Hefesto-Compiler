@@ -12,7 +12,7 @@ void fast_asm_converter(){
 	lista_add_asm("sw", "$zero", "$rf", "0");
 
 	//pule para a primeira linha do P1
-	lista_add_asm("li", "$t25", "20", "");
+	lista_add_asm("li", "$t25", "147", "");
 	lista_add_asm("jumpP1", "$t25", "", "");
 
 	// ========================================================= //
